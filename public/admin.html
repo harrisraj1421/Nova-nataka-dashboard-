@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Nova Nataka</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-view {
+            padding: 4rem 5%;
+            margin-top: 2rem;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+        }
+
+        th,
+        td {
+            padding: 1.2rem;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+            font-size: 0.9rem;
+        }
+
+        th {
+            background: rgba(188, 19, 254, 0.1);
+            color: var(--secondary-color);
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .status-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-new {
+            background: rgba(0, 255, 0, 0.1);
+            color: #0f0;
+        }
+
+        .status-updated {
+            background: rgba(255, 165, 0, 0.1);
+            color: #ffa500;
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card p {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--secondary-color);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="stars-container">
+        <div id="stars"></div>
+        <div id="stars2"></div>
+        <div id="stars3"></div>
+    </div>
+
+    <nav class="navbar">
+        <div class="logo">Nova Nataka<span>.</span> Admin</div>
+        <ul class="nav-links">
+            <li><a href="index.html">Back to Site</a></li>
+            <li><a href="#" onclick="fetchRegistrations()">Refresh Data</a></li>
+            <li><a href="/admin/download" class="btn btn-primary" style="padding: 0.5rem 1rem;">Export Excel</a></li>
+        </ul>
+    </nav>
+
+    <div class="admin-view">
+        <div class="header-actions">
+            <h1 class="section-title" style="text-align: left; margin: 0;">Live Registrations</h1>
+            <button onclick="fetchRegistrations()" class="btn btn-outline" id="refreshBtn">Refresh Data</button>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card glass">
+                <h3>Total Teams</h3>
+                <p id="totalTeams">0</p>
+            </div>
+            <div class="stat-card glass">
+                <h3>Total Participants</h3>
+                <p id="totalParticipants">0</p>
+            </div>
+        </div>
+
+        <div class="table-container glass">
+            <table id="regTable">
+                <thead>
+                    <tr>
+                        <th>Team ID</th>
+                        <th>Team Name</th>
+                        <th>Lead Name</th>
+                        <th>Email</th>
+                        <th>College</th>
+                        <th>Status</th>
+                        <th>Last Updated</th>
+                    </tr>
+                </thead>
+                <tbody id="regBody">
+                    <!-- Data injected here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        async function fetchRegistrations() {
+            const btn = document.getElementById('refreshBtn');
+            btn.innerText = 'Refreshing...';
+            try {
+                const response = await fetch('/api/registrations');
+                const data = await response.json();
+
+                const body = document.getElementById('regBody');
+                body.innerHTML = '';
+
+                let totalParticipants = 0;
+
+                data.forEach(reg => {
+                    totalParticipants += parseInt(reg['Total Members'] || 1);
+                    const isUpdated = reg['Last Updated'] !== 'Never';
+
+                    const row = `
+                        <tr>
+                            <td><strong>${reg['Team ID']}</strong></td>
+                            <td>${reg['Team Name']}</td>
+                            <td>${reg['Lead Name (M1)']}</td>
+                            <td>${reg['Lead Email (M1)']}</td>
+                            <td>${reg['Lead College (M1)']}</td>
+                            <td>
+                                <span class="status-badge ${isUpdated ? 'status-updated' : 'status-new'}">
+                                    ${isUpdated ? 'Edited' : 'New'}
+                                </span>
+                            </td>
+                            <td>${reg['Last Updated'] === 'Never' ? reg['Registration Date'] : reg['Last Updated']}</td>
+                        </tr>
+                    `;
+                    body.innerHTML += row;
+                });
+
+                document.getElementById('totalTeams').innerText = data.length;
+                document.getElementById('totalParticipants').innerText = totalParticipants;
+
+            } catch (err) {
+                console.error('Error:', err);
+                alert('Failed to load registrations. Is the server running?');
+            } finally {
+                btn.innerText = 'Refresh Data';
+            }
+        }
+
+        // Load on start
+        window.onload = fetchRegistrations;
+    </script>
+</body>
+
+</html>

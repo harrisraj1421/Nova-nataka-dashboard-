@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Nataka | Event Registration</title>
+    <meta name="description"
+        content="Register for Nova Nataka - A fun-filled cosmic non-technical event where a stage is born among the stars.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <!-- Background Stars -->
+    <div id="stars-container">
+        <div id="stars"></div>
+        <div id="stars2"></div>
+        <div id="stars3"></div>
+    </div>
+
+    <nav class="navbar">
+        <div class="logo">Nova Nataka<span>.</span></div>
+        <ul class="nav-links">
+            <li><a href="#hero">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#registration">Register</a></li>
+            <li><a href="#admin" onclick="fetchRegistrations()">Dashboard</a></li>
+        </ul>
+    </nav>
+
+    <header class="college-header glass">
+        <div class="header-container">
+            <div class="college-brand">
+                <img src="msec_logo.png" alt="MSEC Logo" class="college-logo"
+                    onerror="this.src='https://via.placeholder.com/100?text=Logo'">
+                <div class="college-info">
+                    <h1>Meenakshi Sundararajan Engineering College</h1>
+                    <p class="institution-type">(An Autonomous Institution) | Managed by IIET Society</p>
+                    <p class="affiliations">Approved by AICTE, New Delhi | Affiliated to Anna University, Chennai</p>
+                    <p class="research">A Recognized Research Center by Anna University</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="hero" class="hero">
+            <div class="hero-content">
+                <h1 class="animate-title">Welcome to <span>Nova Nataka!</span></h1>
+                <p class="animate-subtitle">A fun-filled non-technical event where a stage is born among the stars.</p>
+                <div class="hero-btns">
+                    <a href="#registration" class="btn btn-primary">Register Now</a>
+                    <a href="#about" class="btn btn-outline">Explore More</a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="cosmic-orb"></div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="about">
+            <h2 class="section-title">About the Event</h2>
+            <div class="rounds-container">
+                <div class="card glass">
+                    <div class="card-icon">🎭</div>
+                    <h3>Round 1: Guess the Unsaid</h3>
+                    <p>One participant wears headphones while the other conveys a word or phrase using only actions and
+                        lip movements — no sound allowed!</p>
+                    <span class="time-tag">Time: 5 minutes per team</span>
+                </div>
+                <div class="card glass">
+                    <div class="card-icon">⚡</div>
+                    <h3>Round 2: Stage Storm</h3>
+                    <p>Qualified teams pick a mystery paper from the bowl… and the next game begins!</p>
+                    <span class="time-tag">Next Level: Surprise!</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Registration Section -->
+        <section id="registration" class="registration">
+            <div class="registration-container glass">
+                <h2 class="form-title">Team Registration</h2>
+
+                <!-- Quick Edit Search -->
+                <div class="edit-search-box">
+                    <p>Already registered? Enter your email to edit details:</p>
+                    <div class="search-input-group">
+                        <input type="email" id="searchEmail" placeholder="Lead Email (Member 1)">
+                        <button type="button" id="loadBtn" class="btn btn-secondary">Load Details</button>
+                    </div>
+                </div>
+
+                <form id="registrationForm">
+                    <div class="form-group">
+                        <label for="teamName">Team Name</label>
+                        <input type="text" id="teamName" name="teamName" placeholder="Enter your team name" required>
+                    </div>
+
+                    <!-- Member 1 (Lead) -->
+                    <div class="member-section">
+                        <h4>Member 1 (Team Lead)</h4>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <input type="text" id="m1_name" name="m1_name" placeholder="Name" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="email" id="m1_email" name="m1_email" placeholder="Email" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="tel" id="m1_phone" name="m1_phone" placeholder="Phone Number"
+                                    pattern="[0-9]{10}" title="Please enter a 10-digit phone number" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="m1_college" name="m1_college" placeholder="College" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="m1_dept" name="m1_dept" placeholder="Department" required>
+                            </div>
+                            <div class="form-group">
+                                <select id="m1_year" name="m1_year" required>
+                                    <option value="" disabled selected>Select Year</option>
+                                    <option value="1">1st Year</option>
+                                    <option value="2">2nd Year</option>
+                                    <option value="3">3rd Year</option>
+                                    <option value="4">4th Year</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Member 2 -->
+                    <div class="member-section">
+                        <h4>Member 2</h4>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <input type="text" id="m2_name" name="m2_name" placeholder="Name">
+                            </div>
+                            <div class="form-group">
+                                <input type="tel" id="m2_phone" name="m2_phone" placeholder="Phone Number"
+                                    pattern="[0-9]{10}">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="m2_college" name="m2_college" placeholder="College">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="m2_dept" name="m2_dept" placeholder="Department">
+                            </div>
+                            <div class="form-group">
+                                <select id="m2_year" name="m2_year">
+                                    <option value="" disabled selected>Select Year</option>
+                                    <option value="1">1st Year</option>
+                                    <option value="2">2nd Year</option>
+                                    <option value="3">3rd Year</option>
+                                    <option value="4">4th Year</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Member 3 -->
+                    <div class="member-section">
+                        <h4>Member 3</h4>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <input type="text" id="m3_name" name="m3_name" placeholder="Name">
+                            </div>
+                            <div class="form-group">
+                                <input type="tel" id="m3_phone" name="m3_phone" placeholder="Phone Number"
+                                    pattern="[0-9]{10}">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="m3_college" name="m3_college" placeholder="College">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="m3_dept" name="m3_dept" placeholder="Department">
+                            </div>
+                            <div class="form-group">
+                                <select id="m3_year" name="m3_year">
+                                    <option value="" disabled selected>Select Year</option>
+                                    <option value="1">1st Year</option>
+                                    <option value="2">2nd Year</option>
+                                    <option value="3">3rd Year</option>
+                                    <option value="4">4th Year</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="submitBtn" class="btn btn-primary submit-btn">
+                        <span class="btn-text">Register Team</span>
+                        <div class="loader" id="loader"></div>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Admin Dashboard Section -->
+        <section id="admin" class="admin-section">
+            <div class="header-actions">
+                <h2 class="section-title" style="text-align: left; margin: 0;">Live Registrations</h2>
+                <button onclick="fetchRegistrations()" class="btn btn-outline" id="refreshBtn">Refresh Data</button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card glass">
+                    <h3>Total Teams</h3>
+                    <p id="totalTeams">0</p>
+                </div>
+                <div class="stat-card glass">
+                    <h3>Total Participants</h3>
+                    <p id="totalParticipants">0</p>
+                </div>
+            </div>
+
+            <div class="table-container glass">
+                <table id="regTable">
+                    <thead>
+                        <tr>
+                            <th>Team ID</th>
+                            <th>Team Name</th>
+                            <th>Lead Name</th>
+                            <th>Email</th>
+                            <th>College</th>
+                            <th>Status</th>
+                            <th>Last Updated</th>
+                        </tr>
+                    </thead>
+                    <tbody id="regBody">
+                        <!-- Data injected here -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal">
+        <div class="modal-content glass">
+            <div class="success-icon">✨</div>
+            <h2>Registration Successful!</h2>
+            <p>Your team is now part of the Nova Nataka stage. A confirmation email has been sent to your Team Lead.</p>
+            <button class="btn btn-primary" onclick="closeModal()">Awesome!</button>
+        </div>
+    </div>
+
+    <footer class="glass">
+        <p>&copy; 2024 Nova Nataka. Born among the stars.</p>
+        <div class="admin-link">
+            <a href="/admin/download"
+                style="color: var(--text-muted); font-size: 0.8rem; text-decoration: none; margin-top: 10px; display: inline-block;">Admin:
+                Download registrations (.xlsx)</a>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        async function fetchRegistrations() {
+            const btn = document.getElementById('refreshBtn');
+            if (btn) btn.innerText = 'Refreshing...';
+            try {
+                const response = await fetch('/api/registrations');
+                const data = await response.json();
+
+                const body = document.getElementById('regBody');
+                if (!body) return;
+                body.innerHTML = '';
+
+                let totalParticipants = 0;
+
+                data.forEach(reg => {
+                    totalParticipants += parseInt(reg['Total Members'] || 1);
+                    const isUpdated = (reg['Last Updated'] && reg['Last Updated'] !== 'Never');
+
+                    const row = `
+                        <tr>
+                            <td><strong>${reg['Team ID']}</strong></td>
+                            <td>${reg['Team Name']}</td>
+                            <td>${reg['Lead Name (M1)']}</td>
+                            <td>${reg['Lead Email (M1)']}</td>
+                            <td>${reg['Lead College (M1)']}</td>
+                            <td>
+                                <span class="status-badge ${isUpdated ? 'status-updated' : 'status-new'}">
+                                    ${isUpdated ? 'Edited' : 'New'}
+                                </span>
+                            </td>
+                            <td>${(!reg['Last Updated'] || reg['Last Updated'] === 'Never') ? reg['Registration Date'] : reg['Last Updated']}</td>
+                        </tr>
+                    `;
+                    body.innerHTML += row;
+                });
+
+                document.getElementById('totalTeams').innerText = data.length;
+                document.getElementById('totalParticipants').innerText = totalParticipants;
+
+            } catch (err) {
+                console.error('Error:', err);
+            } finally {
+                if (btn) btn.innerText = 'Refresh Data';
+            }
+        }
+
+        // Load data when page loads if we land on #admin or if we just want it ready
+        window.addEventListener('load', () => {
+            if (window.location.hash === '#admin') fetchRegistrations();
+        });
+    </script>
+</body>
+
+</html>

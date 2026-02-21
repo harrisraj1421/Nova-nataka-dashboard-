@@ -10,22 +10,60 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Montserrat:wght@400;700&family=Syne:wght@400;700;800&family=Space+Grotesk:wght@400;700&family=Michroma&family=Cinzel:wght@400;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Syncopate:wght@400;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
-    <!-- Background Stars -->
-    <div id="stars-container">
-        <div id="stars"></div>
-        <div id="stars2"></div>
-        <div id="stars3"></div>
+    <!-- Preloader -->
+    <div id="preloader">
+        <div class="loader-content">
+            <img src="logo_png.jpeg" alt="Loading Logo" class="blinking-logo">
+        </div>
     </div>
 
+    <!-- Background Slideshow -->
+    <div id="bg-slideshow">
+        <div class="slide active"
+            style="background-image: url('https://images.unsplash.com/photo-1570126688035-1e0adadb3107?q=80&w=2000&auto=format&fit=crop');">
+        </div> <!-- Black Hole -->
+        <div class="slide"
+            style="background-image: url('https://images.unsplash.com/photo-1614313913007-2b4ae8ce32d6?q=80&w=2000&auto=format&fit=crop');">
+        </div> <!-- Wormhole/Lightseed -->
+        <div class="slide"
+            style="background-image: url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=2000&auto=format&fit=crop');">
+        </div> <!-- Grand Nebula -->
+        <div class="slide"
+            style="background-image: url('https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=2000&auto=format&fit=crop');">
+        </div> <!-- Star Nursery -->
+        <div class="slide"
+            style="background-image: url('https://images.unsplash.com/photo-1465101162946-4377e57745c3?q=80&w=2000&auto=format&fit=crop');">
+        </div> <!-- Deep Space Horizon -->
+        <div class="bg-overlay"></div>
+    </div>
+
+    <header class="college-header">
+        <div class="header-container">
+            <div class="college-brand">
+                <img src="msec_logo.png" alt="MSEC Logo" class="college-logo"
+                    onerror="this.src='https://via.placeholder.com/100?text=Logo'">
+                <div class="college-info">
+                    <h1>Meenakshi Sundararajan Engineering College</h1>
+                    <p class="institution-type">(An Autonomous Institution) | Managed by IIET Society</p>
+                    <p class="institution-type" style="color: var(--primary-color) !important; margin-top: 5px;">
+                        Department of Computer Science & Engineering</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
     <nav class="navbar">
-        <div class="logo">Nova Nataka<span>.</span></div>
+        <div class="logo">
+            <img src="logo_png.jpeg" alt="Nova Nataka Logo" class="nav-event-logo">
+            Nova Nataka<span>.</span>
+        </div>
         <ul class="nav-links">
             <li><a href="#hero">Home</a></li>
             <li><a href="#about">About</a></li>
@@ -34,53 +72,57 @@
         </ul>
     </nav>
 
-    <header class="college-header glass">
-        <div class="header-container">
-            <div class="college-brand">
-                <img src="msec_logo.png" alt="MSEC Logo" class="college-logo"
-                    onerror="this.src='https://via.placeholder.com/100?text=Logo'">
-                <div class="college-info">
-                    <h1>Meenakshi Sundararajan Engineering College</h1>
-                    <p class="institution-type">(An Autonomous Institution) | Managed by IIET Society</p>
-                    <p class="affiliations">Approved by AICTE, New Delhi | Affiliated to Anna University, Chennai</p>
-                    <p class="research">A Recognized Research Center by Anna University</p>
-                </div>
-            </div>
-        </div>
-    </header>
-
     <main>
         <!-- Hero Section -->
         <section id="hero" class="hero">
             <div class="hero-content">
-                <h1 class="animate-title">Welcome to <span>Nova Nataka!</span></h1>
-                <p class="animate-subtitle">A fun-filled non-technical event where a stage is born among the stars.</p>
+                <h4 class="story-preface">The stars have whispered your name...</h4>
+                <h1 class="animate-title">The Awakening of <span>Nova Nataka.</span></h1>
+                <p class="animate-subtitle">A cosmic fragment has fallen to Earth, bringing with it a theater from
+                    another dimension. Will you step through the veil and become part of the eternal legend?</p>
                 <div class="hero-btns">
-                    <a href="#registration" class="btn btn-primary">Register Now</a>
-                    <a href="#about" class="btn btn-outline">Explore More</a>
+                    <a href="#about" class="btn btn-primary">Discover the Lore</a>
+                    <a href="#registration" class="btn btn-outline">Enlist Your Crew</a>
                 </div>
             </div>
             <div class="hero-visual">
                 <div class="cosmic-orb"></div>
+                <img src="logo_png.jpeg" alt="Event Logo" class="hero-event-logo">
+            </div>
+            <div class="scroll-indicator">
+                <div class="mouse"></div>
+                <p>Descend into the Legend</p>
             </div>
         </section>
 
-        <!-- About Section -->
+        <!-- Legend/About Section -->
         <section id="about" class="about">
-            <h2 class="section-title">About the Event</h2>
-            <div class="rounds-container">
-                <div class="card glass">
-                    <div class="card-icon">🎭</div>
-                    <h3>Round 1: Guess the Unsaid</h3>
-                    <p>One participant wears headphones while the other conveys a word or phrase using only actions and
-                        lip movements — no sound allowed!</p>
-                    <span class="time-tag">Time: 5 minutes per team</span>
-                </div>
-                <div class="card glass">
-                    <div class="card-icon">⚡</div>
-                    <h3>Round 2: Stage Storm</h3>
-                    <p>Qualified teams pick a mystery paper from the bowl… and the next game begins!</p>
-                    <span class="time-tag">Next Level: Surprise!</span>
+            <div class="story-text-container">
+                <h2 class="section-title">PROLOGUE: THE STARDUST INHERITANCE</h2>
+                <p class="story-paragraph">Before the first sun ignited, there was the Stage. A place where silence
+                    creates music and shadows create light. Today, that stage opens its curtains once more. We call it
+                    "Nova Nataka"—the festival of those who dare to dream in colors the world has forgotten.</p>
+            </div>
+
+            <div class="celestial-trials">
+                <h3 class="story-subtitle">The Sacred Trials</h3>
+                <div class="rounds-container">
+                    <div class="card glass">
+                        <div class="card-icon">🎭</div>
+                        <h3>TRIAL I: THE WHISPERING VOID</h3>
+                        <p class="story-desc">Enter the zone of Absolute Zero. One soul is plunged into silence, while
+                            the other must paint reality through movement alone. Decipher the transmission, or be lost
+                            to the void.</p>
+                        <span class="time-tag">Ritual Time: 5 Earth Minutes</span>
+                    </div>
+                    <div class="card glass">
+                        <div class="card-icon">✨</div>
+                        <h3>TRIAL II: THE SUPERNOVA ASCENSION</h3>
+                        <p class="story-desc">The ultimate combustion of talent. A spark of fate determines your path.
+                            Command the stage with the fire of a thousand suns and leave your mark on the constellation
+                            of time.</p>
+                        <span class="time-tag">Final Objective: Immortality</span>
+                    </div>
                 </div>
             </div>
         </section>
@@ -88,26 +130,31 @@
         <!-- Registration Section -->
         <section id="registration" class="registration">
             <div class="registration-container glass">
-                <h2 class="form-title">Team Registration</h2>
+                <div class="registration-header">
+                    <h2 class="form-title">ENLIST YOUR CREW</h2>
+                    <p class="registration-preface">The Archive of Legends is waiting. Seal your destiny among the
+                        stars.</p>
+                </div>
 
                 <!-- Quick Edit Search -->
                 <div class="edit-search-box">
-                    <p>Already registered? Enter your email to edit details:</p>
+                    <p>Already in the system? Re-access your terminal:</p>
                     <div class="search-input-group">
-                        <input type="email" id="searchEmail" placeholder="Lead Email (Member 1)">
-                        <button type="button" id="loadBtn" class="btn btn-secondary">Load Details</button>
+                        <input type="email" id="searchEmail" placeholder="Commander Email">
+                        <button type="button" id="loadBtn" class="btn btn-secondary">Access Terminal</button>
                     </div>
                 </div>
 
                 <form id="registrationForm">
                     <div class="form-group">
-                        <label for="teamName">Team Name</label>
-                        <input type="text" id="teamName" name="teamName" placeholder="Enter your team name" required>
+                        <label for="teamName">Starship Identity (Team Name)</label>
+                        <input type="text" id="teamName" name="teamName" placeholder="Enter your vessel's title"
+                            required>
                     </div>
 
                     <!-- Member 1 (Lead) -->
                     <div class="member-section">
-                        <h4>Member 1 (Team Lead)</h4>
+                        <h4>Chief Commander (Lead)</h4>
                         <div class="form-grid">
                             <div class="form-group">
                                 <input type="text" id="m1_name" name="m1_name" placeholder="Name" required>
@@ -139,7 +186,7 @@
 
                     <!-- Member 2 -->
                     <div class="member-section">
-                        <h4>Member 2</h4>
+                        <h4>Co-Pilot (Member 2 - Optional)</h4>
                         <div class="form-grid">
                             <div class="form-group">
                                 <input type="text" id="m2_name" name="m2_name" placeholder="Name">
@@ -168,7 +215,7 @@
 
                     <!-- Member 3 -->
                     <div class="member-section">
-                        <h4>Member 3</h4>
+                        <h4>Specialist (Member 3 - Optional)</h4>
                         <div class="form-grid">
                             <div class="form-group">
                                 <input type="text" id="m3_name" name="m3_name" placeholder="Name">
@@ -196,7 +243,7 @@
                     </div>
 
                     <button type="submit" id="submitBtn" class="btn btn-primary submit-btn">
-                        <span class="btn-text">Register Team</span>
+                        <span class="btn-text">Finalize Launch</span>
                         <div class="loader" id="loader"></div>
                     </button>
                 </form>
@@ -253,6 +300,9 @@
     </div>
 
     <footer class="glass">
+        <img src="logo_png.jpeg" alt="Logos" class="footer-logo">
+        <p style="color: var(--primary-color); font-weight: 700; letter-spacing: 1px; margin-bottom: 5px;">Conducted by
+            Department of Computer Science & Engineering</p>
         <p>&copy; 2024 Nova Nataka. Born among the stars.</p>
         <div class="admin-link">
             <a href="/admin/download"
@@ -308,7 +358,19 @@
             }
         }
 
-        // Load data when page loads if we land on #admin or if we just want it ready
+        // Background Slideshow Logic
+        const slides = document.querySelectorAll('.slide');
+        let currentSlide = 0;
+
+        function nextSlide() {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }
+
+        setInterval(nextSlide, 3000); // 3 seconds interval
+
+        // Load data when page loads if we land on #admin
         window.addEventListener('load', () => {
             if (window.location.hash === '#admin') fetchRegistrations();
         });

@@ -1,3 +1,14 @@
+window.addEventListener('load', () => {
+    const preloader = document.getElementById('preloader');
+    if (preloader) {
+        preloader.classList.add('fade-out');
+        // Optional: Remove from DOM after transition
+        setTimeout(() => {
+            preloader.style.display = 'none';
+        }, 800);
+    }
+});
+
 document.addEventListener('DOMContentLoaded', () => {
     const registrationForm = document.getElementById('registrationForm');
     const submitBtn = document.getElementById('submitBtn');
@@ -137,8 +148,30 @@ function closeModal() {
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
-        document.querySelector(this.getAttribute('href')).scrollIntoView({
-            behavior: 'smooth'
-        });
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
     });
 });
+
+// Scroll Reveal Logic for Storytelling
+const revealCallback = (entries, observer) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('active');
+        }
+    });
+};
+
+const revealObserver = new IntersectionObserver(revealCallback, {
+    threshold: 0.1
+});
+
+document.querySelectorAll('.hero-content, .card, .story-text-container, .registration-container, .admin-section').forEach(el => {
+    el.classList.add('reveal');
+    revealObserver.observe(el);
+});
+

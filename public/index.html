@@ -53,30 +53,36 @@
                     <h1>Meenakshi Sundararajan Engineering College</h1>
                     <p class="institution-type">(An Autonomous Institution) | Managed by IIET Society</p>
                     <p class="institution-type" style="color: var(--primary-color) !important; margin-top: 5px;">
-                        Department of Computer Science & Engineering</p>
+                        Department of Computer Science &amp; Engineering</p>
                 </div>
             </div>
-        </div>
-    </header>
 
-    <nav class="navbar">
-        <div class="logo">
-            <img src="logo_png.jpeg" alt="Nova Nataka Logo" class="nav-event-logo">
-            Nova Nataka<span>.</span>
+            <!-- Floating Event Navbar (logo/title only) -->
+            <nav class="event-navbar-mini glass">
+                <div class="logo-mini">
+                    <img src="logo_png.jpeg" alt="Nova Nataka Logo" class="nav-event-logo-mini">
+                    <span class="event-title-mini">Nova Nataka<span>.</span></span>
+                </div>
+            </nav>
+
+            <!-- Hamburger lives here, top-right of the college header -->
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
         </div>
-        <div class="hamburger" id="hamburger">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
-        <ul class="nav-links">
+        <!-- Nav links dropdown -->
+        <ul class="nav-links" id="nav-links">
             <li><a href="#hero">Home</a></li>
             <li><a href="#about">About</a></li>
             <li><a href="#rules">Rules</a></li>
             <li><a href="#registration">Register</a></li>
             <li><a href="#admin" onclick="fetchRegistrations()">Dashboard</a></li>
         </ul>
-    </nav>
+    </header>
+
+
 
     <main>
         <!-- Hero Section -->

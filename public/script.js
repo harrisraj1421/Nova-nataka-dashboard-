@@ -114,35 +114,34 @@ document.addEventListener('DOMContentLoaded', () => {
                 navLinks.classList.remove('active');
             });
         });
+
+        // Close menu when clicking outside the header
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.college-header')) {
+                hamburger.classList.remove('active');
+                navLinks.classList.remove('active');
+            }
+        });
     }
 
-    // --- Dynamic Navbar Positioning ---
-    const collegeHeader = document.querySelector('.college-header');
-    const navbar = document.querySelector('.navbar');
+    // --- Dynamic Mini-Navbar Feedback (Optional) ---
+    const eventMiniNav = document.querySelector('.event-navbar-mini');
 
-    function positionNavbar() {
-        if (!navbar) return;
-        const headerH = collegeHeader ? collegeHeader.offsetHeight : 0;
-        const scrolled = window.scrollY > 10;
+    function updateHeaderOnScroll() {
+        if (!eventMiniNav) return;
+        const scrolled = window.scrollY > 50;
 
         if (scrolled) {
-            // Collapsed: small pill near the very top
-            navbar.style.top = '10px';
-            navbar.style.width = '92%';
-            navbar.style.background = 'rgba(5, 5, 20, 0.88)';
-            navbar.style.padding = '0.5rem 1.8rem';
+            eventMiniNav.style.padding = '0.3rem 1rem';
+            eventMiniNav.style.background = 'rgba(255, 255, 255, 0.08)';
         } else {
-            // Default: float just below the college header
-            navbar.style.top = (headerH + 14) + 'px';
-            navbar.style.width = '88%';
-            navbar.style.background = 'rgba(5, 5, 20, 0.55)';
-            navbar.style.padding = '0.7rem 2rem';
+            eventMiniNav.style.padding = '0.5rem 1.2rem';
+            eventMiniNav.style.background = 'rgba(255, 255, 255, 0.03)';
         }
     }
 
-    window.addEventListener('scroll', positionNavbar);
-    window.addEventListener('resize', positionNavbar);
-    positionNavbar(); // run once on load
+    window.addEventListener('scroll', updateHeaderOnScroll);
+    updateHeaderOnScroll();
 
     // --- Interstellar Easter Eggs ---
     const slides = document.querySelectorAll('.slide');
@@ -209,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Tesseract Mode
-    const navLogo = document.querySelector('.nav-event-logo');
+    const navLogo = document.querySelector('.nav-event-logo-mini');
     let logoClicks = 0;
     if (navLogo) {
         navLogo.addEventListener('click', () => {

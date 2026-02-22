@@ -108,11 +108,19 @@
     </div>
 
     <nav class="navbar">
-        <div class="logo">Nova Nataka<span>.</span> Admin</div>
+        <div class="logo">
+            <img src="logo_png.jpeg" alt="Logo" class="nav-event-logo" style="height: 40px; border-radius: 50%;">
+            Nova Nataka<span>.</span> Admin
+        </div>
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
         <ul class="nav-links">
             <li><a href="index.html">Back to Site</a></li>
-            <li><a href="#" onclick="fetchRegistrations()">Refresh Data</a></li>
-            <li><a href="/admin/download" class="btn btn-primary" style="padding: 0.5rem 1rem;">Export Excel</a></li>
+            <li><a href="#" onclick="fetchRegistrations()">Refresh</a></li>
+            <li><a href="/admin/download" class="btn btn-primary" style="padding: 0.5rem 1rem;">Export</a></li>
         </ul>
     </nav>
 
@@ -157,122 +165,7 @@
         </div>
     </div>
 
-    <script>
-        let adminPassword = null;
-
-        function toggleAdminMode() {
-            if (document.body.classList.contains('admin-mode')) {
-                document.body.classList.remove('admin-mode');
-                adminPassword = null;
-                alert('Admin mode disabled.');
-                return;
-            }
-
-            const pw = prompt('Enter Admin Password:');
-            if (pw === null) return;
-
-            if (pw === 'admin123') {
-                document.body.classList.add('admin-mode');
-                adminPassword = pw;
-                alert('Admin mode activated.');
-            } else {
-                alert('Invalid password.');
-            }
-        }
-
-        async function fetchRegistrations() {
-            const btn = document.getElementById('refreshBtn');
-            btn.innerText = 'Refreshing...';
-            try {
-                const response = await fetch('/api/registrations');
-                const data = await response.json();
-
-                const body = document.getElementById('regBody');
-                body.innerHTML = '';
-
-                let totalParticipants = 0;
-
-                data.forEach(reg => {
-                    totalParticipants += parseInt(reg['Total Members'] || 1);
-                    const isUpdated = reg['Last Updated'] !== 'Never';
-
-                    const row = `
-                        <tr>
-                            <td><strong>${reg['Team ID']}</strong></td>
-                            <td>${reg['Team Name']}</td>
-                            <td>${reg['Lead Name (M1)']}</td>
-                            <td>${reg['Lead Email (M1)']}</td>
-                            <td>${reg['Lead College (M1)']}</td>
-                            <td>
-                                <div class="action-cell">
-                                    <span class="status-badge ${isUpdated ? 'status-updated' : 'status-new'}">
-                                        ${isUpdated ? 'Edited' : 'New'}
-                                    </span>
-                                    <button class="btn-delete" onclick="deleteRegistration('${reg['Lead Email (M1)']}')">Delete</button>
-                                </div>
-                            </td>
-                            <td>${reg['Last Updated'] === 'Never' ? reg['Registration Date'] : reg['Last Updated']}</td>
-                        </tr>
-                    `;
-                    body.innerHTML += row;
-                });
-
-                document.getElementById('totalTeams').innerText = data.length;
-                document.getElementById('totalParticipants').innerText = totalParticipants;
-
-            } catch (err) {
-                console.error('Error:', err);
-                // alert('Failed to load registrations. Is the server running?');
-            } finally {
-                btn.innerText = 'Refresh Data';
-            }
-        }
-
-        async function deleteRegistration(email) {
-            if (!adminPassword) {
-                alert('Please click "Admin Unlock" and enter password to delete.');
-                return;
-            }
-
-            if (!confirm(`Are you sure you want to delete the registration for ${email}?`)) {
-                return;
-            }
-
-            try {
-                const response = await fetch('/api/delete-registration', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password: adminPassword })
-                });
-
-                let result;
-                const contentType = response.headers.get("content-type");
-                if (contentType && contentType.includes("application/json")) {
-                    result = await response.json();
-                } else {
-                    const text = await response.text();
-                    console.error("Non-JSON error response:", text);
-                    throw new Error(`Server Error (${response.status}): The server did not respond correctly.`);
-                }
-
-                if (response.ok) {
-                    alert('Registration deleted successfully.');
-                    fetchRegistrations();
-                } else {
-                    alert('Error: ' + (result.message || 'Unknown error.'));
-                }
-            } catch (err) {
-                console.error('Delete error:', err);
-                alert(err.message || 'Could not delete registration.');
-            }
-        }
-
-        // Load on start
-        window.onload = fetchRegistrations;
-
-        // Auto-refresh every 30 seconds for live updates
-        setInterval(fetchRegistrations, 30000);
-    </script>
+    <script src="script.js"></script>
 </body>
 
 </html>

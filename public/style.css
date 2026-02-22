@@ -279,25 +279,27 @@ h3 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.5rem 2%;
+    padding: 1rem 5%;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     z-index: 1000;
-    background: transparent;
-    transition: all 0.4s ease;
+    transition: var(--transition);
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-bottom: 1px solid var(--glass-border);
 }
 
-
-
 .logo {
-    font-size: 1.2rem;
-    font-weight: 900;
-    letter-spacing: 3px;
+    font-size: 1.5rem;
+    font-weight: 800;
     display: flex;
     align-items: center;
     gap: 15px;
+    z-index: 1001;
+    letter-spacing: 3px;
     text-transform: uppercase;
 }
 
@@ -315,8 +317,6 @@ h3 {
 }
 
 .nav-links {
-    position: fixed;
-    top: 100px;
     right: 5%;
     width: 300px;
     background: rgba(255, 255, 255, 0.05);
@@ -961,11 +961,22 @@ footer {
 }
 
 /* --- Responsive --- */
+@media (max-width: 1024px) {
+    .hero h1 {
+        font-size: 3.5rem;
+    }
+
+    .registration-container {
+        padding: 3rem;
+    }
+}
+
 @media (max-width: 768px) {
     .college-brand {
         flex-direction: column;
         gap: 1rem;
         text-align: center;
+        padding-bottom: 2rem;
     }
 
     .college-info {
@@ -986,27 +997,110 @@ footer {
     }
 
     .hero {
-        flex-direction: column;
+        flex-direction: column-reverse;
         justify-content: center;
         text-align: center;
-        padding-top: 100px;
+        padding-top: 120px;
+        gap: 3rem;
+    }
+
+    .hero-content {
+        width: 100% !important;
     }
 
     .hero h1 {
-        font-size: 2.5rem;
+        font-size: 2.8rem;
+    }
+
+    .animate-subtitle {
+        font-size: 1rem;
+    }
+
+    .hero-btns {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .hero-btns .btn {
+        width: 100%;
+        margin-left: 0;
     }
 
     .btn-outline {
-        margin-left: 0;
         margin-top: 1rem;
     }
 
     .registration-container {
+        padding: 2rem 1.5rem;
+        border-radius: 15px;
+    }
+
+    .section-title {
+        font-size: 2rem;
+    }
+
+    .story-paragraph {
+        font-size: 1.1rem;
+        padding: 2rem 1.5rem;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .rules {
+        padding: 3rem 5%;
+    }
+
+    .rules-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .header-actions {
+        flex-direction: column;
+        gap: 1.5rem;
+        text-align: center;
+    }
+
+    .header-btns {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .table-container {
+        margin-top: 1rem;
+    }
+
+    th,
+    td {
+        padding: 0.8rem;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero h1 {
+        font-size: 2rem;
+    }
+
+    .animate-subtitle {
+        font-size: 0.9rem;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+    }
+
+    .card {
         padding: 1.5rem;
     }
 
-    .nav-links {
-        display: none;
+    .modal-content {
+        padding: 2rem 1rem;
     }
 }
 
@@ -1232,6 +1326,18 @@ body.tesseract-mode .hero-content h1 span {
 
     to {
         transform: rotate(360deg);
+    }
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-20px);
     }
 }
 

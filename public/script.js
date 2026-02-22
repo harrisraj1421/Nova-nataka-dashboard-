@@ -121,11 +121,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const navbar = document.querySelector('.navbar');
         if (navbar) {
             if (window.scrollY > 50) {
-                navbar.style.background = 'rgba(0, 0, 0, 0.9)';
-                navbar.style.padding = '0.7rem 5%';
+                navbar.style.background = 'rgba(0, 0, 0, 0.85)';
+                navbar.style.width = '95%';
+                navbar.style.top = '10px';
+                navbar.style.padding = '0.6rem 5%';
+                navbar.style.boxShadow = '0 25px 60px rgba(0, 0, 0, 0.7)';
             } else {
-                navbar.style.background = 'rgba(0, 0, 0, 0.3)';
-                navbar.style.padding = '1rem 5%';
+                navbar.style.background = 'rgba(0, 0, 0, 0.4)';
+                navbar.style.width = '90%';
+                navbar.style.top = '20px';
+                navbar.style.padding = '0.8rem 5%';
+                navbar.style.boxShadow = '0 20px 50px rgba(0, 0, 0, 0.5)';
             }
         }
     });

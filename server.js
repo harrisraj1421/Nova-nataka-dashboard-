@@ -254,6 +254,61 @@ app.get('/admin/download', (req, res) => {
     }
 });
 
+app.post('/api/delete-registration', (req, res) => {
+    const { email, password } = req.body;
+
+    if (password !== process.env.ADMIN_PASSWORD) {
+        return res.status(401).json({ message: 'Unauthorized. Invalid admin password.' });
+    }
+
+    if (!email) {
+        return res.status(400).json({ message: 'Email is required to delete a record.' });
+    }
+
+    const filePath = path.join(__dirname, EXCEL_FILE);
+    if (!fs.existsSync(filePath)) {
+        return res.status(404).json({ message: 'No file found to delete from.' });
+    }
+
+    try {
+        const workbook = XLSX.readFile(filePath);
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        let data = XLSX.utils.sheet_to_json(worksheet);
+
+        const initialLength = data.length;
+        // Filter out the record with the matching email
+        const filteredData = data.filter(row =>
+            row['Lead Email (M1)'] && row['Lead Email (M1)'].toString().trim().toLowerCase() !== email.trim().toLowerCase()
+        );
+
+        if (filteredData.length === initialLength) {
+            return res.status(404).json({ message: 'Record not found.' });
+        }
+
+        // Re-calculate Team IDs for consistency (optional, but keeps it clean)
+        const updatedData = filteredData.map((row, index) => {
+            return {
+                ...row,
+                'Team ID': `Team ${index + 1}`
+            };
+        });
+
+        const newWorksheet = XLSX.utils.json_to_sheet(updatedData);
+        workbook.Sheets[sheetName] = newWorksheet;
+        XLSX.writeFile(workbook, filePath);
+
+        console.log(`[DELETE] Removed record for: ${email}`);
+        res.status(200).json({ message: 'Record deleted successfully' });
+    } catch (error) {
+        if (error.code === 'EBUSY' || error.toString().includes('permission denied')) {
+            return res.status(500).json({ message: "SERVER ERROR: File is open in Excel. Close it to delete." });
+        }
+        console.error('Delete error:', error);
+        res.status(500).json({ message: 'Error deleting record' });
+    }
+});
+
 app.post('/api/register', async (req, res) => {
     console.log("\n[REQUEST] " + new Date().toLocaleTimeString() + " - New registration attempt");
     console.log("Data:", JSON.stringify(req.body, null, 2));

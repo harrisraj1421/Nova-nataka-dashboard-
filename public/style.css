@@ -712,6 +712,43 @@ h3 {
     font-weight: 700;
 }
 
+/* --- Rules Section --- */
+.rules {
+    padding: 5rem 10%;
+    background: transparent;
+    position: relative;
+}
+
+.rules-grid-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.rules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    padding: 2rem 0;
+}
+
+.rules-grid .card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 3rem 2rem;
+}
+
+@media (max-width: 768px) {
+    .rules {
+        padding: 3rem 5%;
+    }
+
+    .rules-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* --- Registration --- */
 .registration {
     padding: 5rem 10%;
@@ -902,6 +939,22 @@ footer {
     border: 2px solid rgba(255, 255, 255, 0.15);
 }
 
+.egg-hint-box {
+    margin-top: 10px;
+    padding: 8px 15px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    font-family: 'Space Grotesk', monospace;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.egg-hint-box span {
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
 .footer-logo:hover {
     filter: grayscale(0) brightness(1) drop-shadow(0 0 10px var(--primary-color));
     opacity: 1;
@@ -1059,4 +1112,131 @@ tr:hover {
 .status-updated {
     background: rgba(255, 165, 0, 0.1);
     color: #ffa500;
+}
+
+.btn-delete {
+    display: none;
+    /* Hidden by default */
+    background: rgba(255, 0, 0, 0.15);
+    color: #ff4444;
+    border: 1px solid rgba(255, 68, 68, 0.3);
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+/* Class to show delete buttons */
+body.admin-mode .btn-delete {
+    display: inline-block;
+}
+
+.btn-delete:hover {
+    background: #ff4444;
+    color: white;
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(255, 68, 68, 0.4);
+}
+
+/* Tesseract Mode Easter Egg */
+body.tesseract-mode {
+    filter: hue-rotate(90deg) brightness(1.1);
+}
+
+body.tesseract-mode .bg-overlay {
+    background: repeating-linear-gradient(0deg,
+            rgba(0, 210, 255, 0.03) 0px,
+            rgba(0, 210, 255, 0.03) 1px,
+            transparent 1px,
+            transparent 20px),
+        repeating-linear-gradient(90deg,
+            rgba(0, 210, 255, 0.03) 0px,
+            rgba(0, 210, 255, 0.03) 1px,
+            transparent 1px,
+            transparent 20px);
+}
+
+body.tesseract-mode .hero-content h1 span {
+    animation: glitch 1s infinite;
+}
+
+@keyframes glitch {
+    0% {
+        transform: skew(0deg);
+    }
+
+    20% {
+        transform: skew(2deg);
+        filter: blur(1px);
+    }
+
+    40% {
+        transform: skew(-2deg);
+    }
+
+    100% {
+        transform: skew(0deg);
+    }
+}
+
+/* Supernova Easter Egg */
+.supernova-flare {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: white;
+    z-index: 9999;
+    animation: supernova-flicker 2s forwards;
+    pointer-events: none;
+}
+
+@keyframes supernova-flicker {
+    0% {
+        opacity: 0;
+        transform: scale(1);
+    }
+
+    10% {
+        opacity: 1;
+        filter: contrast(200%) brightness(200%);
+    }
+
+    20% {
+        opacity: 0.8;
+    }
+
+    30% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(3);
+        filter: blur(100px);
+    }
+}
+
+/* Docking Sequence */
+.docking-spin {
+    animation: docking-rotation 0.5s infinite linear !important;
+    filter: drop-shadow(0 0 40px var(--primary-color)) brightness(1.5) !important;
+}
+
+@keyframes docking-rotation {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.action-cell {
+    display: flex;
+    gap: 10px;
+    align-items: center;
 }

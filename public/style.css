@@ -5,9 +5,9 @@
     /* Galactic Purple */
     --accent-color: #fff;
     --bg-dark: #000;
-    --bg-card: rgba(0, 0, 0, 0.85);
-    /* Darker for better contrast */
-    --glass-border: rgba(255, 255, 255, 0.2);
+    --bg-card: rgba(15, 15, 15, 0.4);
+    /* More minimal and transparent */
+    --glass-border: rgba(255, 255, 255, 0.15);
     --text-main: #ffffff;
     --text-muted: rgba(255, 255, 255, 0.85);
     --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
@@ -46,8 +46,8 @@ p,
 /* Glass & Card Base */
 .glass,
 .card {
-    background: rgba(0, 0, 0, 0.85);
-    /* Solid glass background */
+    background: rgba(255, 255, 255, 0.03);
+    /* Light glass background */
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--glass-border);
@@ -203,11 +203,11 @@ h3 {
 
 /* --- College Header --- */
 .college-header {
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    padding: 1rem 5%;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    padding: 2rem 5%;
+    border-bottom: none;
     position: relative;
     z-index: 110;
 }
@@ -225,9 +225,11 @@ h3 {
 }
 
 .college-logo {
-    height: 80px;
-    width: 80px;
-    object-fit: contain;
+    height: 90px;
+    width: 90px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.2);
     filter: drop-shadow(0 0 15px var(--secondary-color));
     transition: var(--transition);
 }
@@ -277,15 +279,17 @@ h3 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 8%;
-    position: sticky;
+    padding: 1.5rem 2%;
+    position: fixed;
     top: 0;
+    left: 0;
     width: 100%;
-    z-index: 100;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(15px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    z-index: 1000;
+    background: transparent;
+    transition: all 0.4s ease;
 }
+
+
 
 .logo {
     font-size: 1.2rem;
@@ -311,26 +315,147 @@ h3 {
 }
 
 .nav-links {
-    display: flex;
+    position: fixed;
+    top: 100px;
+    right: 5%;
+    width: 300px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border-radius: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 2.5rem;
+    flex-direction: column;
+    align-items: center;
     gap: 2rem;
-    list-style: none;
+    display: none;
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);
+    z-index: 999;
+}
+
+.nav-links.active {
+    display: flex;
+    animation: slideDown 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@media (max-width: 600px) {
+    .nav-links {
+        width: 90%;
+        right: 5%;
+        top: 90px;
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 .nav-links a {
     text-decoration: none;
     color: var(--text-main);
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
+    letter-spacing: 2px;
     transition: var(--transition);
-    opacity: 0.7;
+    opacity: 0.6;
+    position: relative;
+    padding: 0.5rem 0;
+}
+
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    transition: var(--transition);
+    transform: translateX(-50%);
+    border-radius: 10px;
 }
 
 .nav-links a:hover {
     color: var(--primary-color);
     opacity: 1;
-    text-shadow: 0 0 10px var(--primary-color);
+}
+
+.nav-links a:hover::after {
+    width: 100%;
+}
+
+/* Active Signal Pulse */
+.logo::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: #00ff88;
+    border-radius: 50%;
+    margin-left: -5px;
+    box-shadow: 0 0 10px #00ff88;
+    animation: signal-pulse 2s infinite;
+}
+
+@keyframes signal-pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+        box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.7);
+    }
+
+    70% {
+        transform: scale(1.2);
+        opacity: 0.5;
+        box-shadow: 0 0 0 10px rgba(0, 255, 136, 0);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+        box-shadow: 0 0 0 0 rgba(0, 255, 136, 0);
+    }
+}
+
+/* --- Hamburger Menu --- */
+.hamburger {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 30px;
+    height: 22px;
+    cursor: pointer;
+    z-index: 1001;
+    padding: 2px;
+}
+
+.hamburger span {
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    border-radius: 10px;
+    transition: var(--transition);
+    transform-origin: center;
+}
+
+.hamburger.active span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.hamburger.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
 }
 
 /* --- Hero --- */
@@ -596,9 +721,9 @@ h3 {
     max-width: 850px;
     margin: 0 auto;
     padding: 4rem;
-    background: rgba(0, 0, 0, 0.95) !important;
-    /* Extremely high opacity for forms */
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    background: rgba(255, 255, 255, 0.04) !important;
+    /* More aesthetic glass feel */
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.3);
 }
 
 .form-title {

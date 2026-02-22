@@ -203,13 +203,16 @@ h3 {
 
 /* --- College Header --- */
 .college-header {
-    background: transparent;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    padding: 2rem 5%;
-    border-bottom: none;
-    position: relative;
-    z-index: 110;
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 1.2rem 5%;
+    border-bottom: 1px solid var(--glass-border);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 200;
 }
 
 .header-container {
@@ -279,21 +282,21 @@ h3 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.8rem 5%;
+    padding: 0.7rem 2rem;
     position: fixed;
-    top: 20px;
+    top: calc(var(--college-header-height, 90px) + 14px);
     left: 50%;
     transform: translateX(-50%);
-    width: 90%;
-    max-width: 1200px;
-    z-index: 1000;
-    transition: var(--transition);
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid var(--glass-border);
+    width: 88%;
+    max-width: 1100px;
+    z-index: 150;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    background: rgba(5, 5, 20, 0.55);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.13);
     border-radius: 100px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(0, 210, 255, 0.07);
 }
 
 .logo {
@@ -468,7 +471,7 @@ h3 {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 10%;
+    padding: 180px 10% 0;
 }
 
 .hero h1 {
@@ -1004,7 +1007,7 @@ footer {
         flex-direction: column-reverse;
         justify-content: center;
         text-align: center;
-        padding-top: 120px;
+        padding-top: 230px;
         gap: 3rem;
     }
 

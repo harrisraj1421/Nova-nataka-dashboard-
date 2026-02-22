@@ -116,25 +116,33 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Smooth Navbar Background on Scroll ---
-    window.addEventListener('scroll', () => {
-        const navbar = document.querySelector('.navbar');
-        if (navbar) {
-            if (window.scrollY > 50) {
-                navbar.style.background = 'rgba(0, 0, 0, 0.85)';
-                navbar.style.width = '95%';
-                navbar.style.top = '10px';
-                navbar.style.padding = '0.6rem 5%';
-                navbar.style.boxShadow = '0 25px 60px rgba(0, 0, 0, 0.7)';
-            } else {
-                navbar.style.background = 'rgba(0, 0, 0, 0.4)';
-                navbar.style.width = '90%';
-                navbar.style.top = '20px';
-                navbar.style.padding = '0.8rem 5%';
-                navbar.style.boxShadow = '0 20px 50px rgba(0, 0, 0, 0.5)';
-            }
+    // --- Dynamic Navbar Positioning ---
+    const collegeHeader = document.querySelector('.college-header');
+    const navbar = document.querySelector('.navbar');
+
+    function positionNavbar() {
+        if (!navbar) return;
+        const headerH = collegeHeader ? collegeHeader.offsetHeight : 0;
+        const scrolled = window.scrollY > 10;
+
+        if (scrolled) {
+            // Collapsed: small pill near the very top
+            navbar.style.top = '10px';
+            navbar.style.width = '92%';
+            navbar.style.background = 'rgba(5, 5, 20, 0.88)';
+            navbar.style.padding = '0.5rem 1.8rem';
+        } else {
+            // Default: float just below the college header
+            navbar.style.top = (headerH + 14) + 'px';
+            navbar.style.width = '88%';
+            navbar.style.background = 'rgba(5, 5, 20, 0.55)';
+            navbar.style.padding = '0.7rem 2rem';
         }
-    });
+    }
+
+    window.addEventListener('scroll', positionNavbar);
+    window.addEventListener('resize', positionNavbar);
+    positionNavbar(); // run once on load
 
     // --- Interstellar Easter Eggs ---
     const slides = document.querySelectorAll('.slide');

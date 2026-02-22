@@ -50,6 +50,7 @@ function saveToExcel(data) {
         'Member 3 Year': data.m3_year || 'N/A'
     };
 
+    let isUpdate = false;
     try {
         if (fs.existsSync(filePath)) {
             console.log("Reading existing Excel file...");
@@ -65,6 +66,7 @@ function saveToExcel(data) {
 
             if (existingIndex !== -1) {
                 console.log(`[EDIT] Updating existing record for: ${leadEmail}`);
+                isUpdate = true;
                 const originalRegDate = existingData[existingIndex]['Registration Date'] || new Date().toLocaleString();
                 const teamId = existingData[existingIndex]['Team ID']; // Preserve original Team ID
 
@@ -76,6 +78,7 @@ function saveToExcel(data) {
                 };
             } else {
                 console.log(`[NEW] Adding new record for: ${leadEmail}`);
+                isUpdate = false;
                 // Calculate next Team ID
                 const nextNum = existingData.length + 1;
                 existingData.push({
@@ -88,6 +91,7 @@ function saveToExcel(data) {
         } else {
             console.log("Creating new master Excel file...");
             workbook = XLSX.utils.book_new();
+            isUpdate = false;
             existingData = [{
                 'Team ID': 'Team 1',
                 'Registration Date': new Date().toLocaleString(),
@@ -113,6 +117,7 @@ function saveToExcel(data) {
 
         XLSX.writeFile(workbook, filePath);
         console.log("Excel file successfully updated.");
+        return isUpdate;
     } catch (excelError) {
         if (excelError.code === 'EBUSY' || excelError.toString().includes('permission denied')) {
             throw new Error("SERVER ERROR: The registration file is currently open in Excel. Please close it so the server can save your changes.");
@@ -123,7 +128,7 @@ function saveToExcel(data) {
 }
 
 // --- Helper: Send Email ---
-async function sendConfirmationEmail(userEmail, userName) {
+async function sendConfirmationEmail(userEmail, userName, isUpdate = false) {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -132,19 +137,23 @@ async function sendConfirmationEmail(userEmail, userName) {
         }
     });
 
+    const subject = isUpdate ? 'Nova Nataka Registration Updated ✅' : 'Nova Nataka Registration Successful ✅';
+    const title = isUpdate ? 'Registration Updated! 🔄' : 'Welcome to Nova Nataka! 🌟';
+    const statusText = isUpdate ? 'Your registration details have been <strong>successfully updated</strong>.' : 'Your registration for <strong>Nova Nataka</strong> has been successfully completed.';
+
     const mailOptions = {
         from: `"Nova Nataka Team" <${process.env.EMAIL_USER}>`,
         to: userEmail,
-        subject: 'Nova Nataka Registration Successful ✅',
+        subject: subject,
         html: `
             <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; max-width: 600px; margin: auto; border: 1px solid #eee; padding: 20px; border-radius: 10px;">
-                <h2 style="color: #bc13fe; text-align: center;">Welcome to Nova Nataka! 🌟</h2>
+                <h2 style="color: #bc13fe; text-align: center;">${title}</h2>
                 <p>Hello <strong>${userName}</strong>,</p>
-                <p>Your registration for <strong>Nova Nataka</strong> has been successfully completed.</p>
+                <p>${statusText}</p>
                 <p>Get ready to shine on stage among the stars! We are excited to see what your team brings to the event.</p>
                 <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0;">
                     <p style="margin: 0;"><strong>Event:</strong> Nova Nataka</p>
-                    <p style="margin: 0;"><strong>Status:</strong> Registered ✅</p>
+                    <p style="margin: 0;"><strong>Status:</strong> ${isUpdate ? 'Updated ✅' : 'Registered ✅'}</p>
                 </div>
                 <p>See you at the event!</p>
                 <p style="font-size: 0.9em; color: #777;">Best Regards,<br>Nova Nataka Organizing Team</p>
@@ -323,14 +332,14 @@ app.post('/api/register', async (req, res) => {
         }
 
         // 2. Save to Excel
-        saveToExcel(registrationData);
+        const isUpdate = saveToExcel(registrationData);
 
         // 3. Send Email
         console.log("Attempting to send confirmation email...");
-        await sendConfirmationEmail(registrationData.m1_email, registrationData.m1_name);
+        await sendConfirmationEmail(registrationData.m1_email, registrationData.m1_name, isUpdate);
 
         console.log(">>> REGISTRATION COMPLETED SUCCESSFULLY <<<\n");
-        res.status(200).json({ message: 'Registration successful' });
+        res.status(200).json({ message: isUpdate ? 'Registration updated' : 'Registration successful' });
     } catch (error) {
         console.error('>>> REGISTRATION FAILED ERROR:', error.message);
         res.status(500).json({ message: error.message || 'Internal Server Error' });

@@ -6,10 +6,35 @@ const fs = require('fs');
 const XLSX = require('xlsx');
 const nodemailer = require('nodemailer');
 const cors = require('cors');
+const mongoose = require('mongoose');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const EXCEL_FILE = 'nova_nataka_registrations.xlsx';
+
+// --- Database Connection ---
+const MONGODB_URI = process.env.MONGODB_URI;
+if (!MONGODB_URI) {
+    console.error("CRITICAL: MONGODB_URI is missing in .env! Data will not persist correctly.");
+} else {
+    mongoose.connect(MONGODB_URI)
+        .then(() => console.log("Connected to MongoDB Atlas ✅"))
+        .catch(err => console.error("MongoDB Connection Error ❌:", err));
+}
+
+// --- Schema Definition ---
+const registrationSchema = new mongoose.Schema({
+    teamId: String,
+    teamName: String,
+    memberCount: Number,
+    registrationDate: { type: Date, default: Date.now },
+    lastUpdated: Date,
+    m1_name: String, m1_email: { type: String, lowercase: true }, m1_phone: String, m1_college: String, m1_dept: String, m1_year: String,
+    m2_name: String, m2_phone: String, m2_college: String, m2_dept: String, m2_year: String,
+    m3_name: String, m3_phone: String, m3_college: String, m3_dept: String, m3_year: String
+});
+
+const Registration = mongoose.model('Registration', registrationSchema);
 
 // Middleware
 app.use(cors());
@@ -29,13 +54,8 @@ function getExcelPath() {
     return defaultPath;
 }
 
-// --- Helper: Save to Excel (UPSERT Logic) ---
-function saveToExcel(data) {
-    const filePath = getExcelPath();
-    let workbook;
-    let existingData = [];
-
-    // Clean inputs for matching
+// --- Helper: Save to MongoDB ---
+async function saveToDB(data) {
     const leadEmail = data.m1_email.trim().toLowerCase();
 
     // Calculate total members
@@ -43,101 +63,44 @@ function saveToExcel(data) {
     if (data.m2_name && data.m2_name.trim() !== "") memberCount++;
     if (data.m3_name && data.m3_name.trim() !== "") memberCount++;
 
-    const entryData = {
-        'Team Name': data.teamName,
-        'Total Members': memberCount,
-        'Lead Name (M1)': data.m1_name,
-        'Lead Email (M1)': data.m1_email, // Keep original for display
-        'Lead Phone (M1)': data.m1_phone,
-        'Lead College (M1)': data.m1_college,
-        'Lead Dept (M1)': data.m1_dept,
-        'Lead Year (M1)': data.m1_year,
-        'Member 2 Name': data.m2_name || 'N/A',
-        'Member 2 Phone': data.m2_phone || 'N/A',
-        'Member 2 College': data.m2_college || 'N/A',
-        'Member 2 Dept': data.m2_dept || 'N/A',
-        'Member 2 Year': data.m2_year || 'N/A',
-        'Member 3 Name': data.m3_name || 'N/A',
-        'Member 3 Phone': data.m3_phone || 'N/A',
-        'Member 3 College': data.m3_college || 'N/A',
-        'Member 3 Dept': data.m3_dept || 'N/A',
-        'Member 3 Year': data.m3_year || 'N/A'
+    const updateData = {
+        teamName: data.teamName,
+        memberCount: memberCount,
+        m1_name: data.m1_name,
+        m1_email: leadEmail,
+        m1_phone: data.m1_phone,
+        m1_college: data.m1_college,
+        m1_dept: data.m1_dept,
+        m1_year: data.m1_year,
+        m2_name: data.m2_name || 'N/A',
+        m2_phone: data.m2_phone || 'N/A',
+        m2_college: data.m2_college || 'N/A',
+        m2_dept: data.m2_dept || 'N/A',
+        m2_year: data.m2_year || 'N/A',
+        m3_name: data.m3_name || 'N/A',
+        m3_phone: data.m3_phone || 'N/A',
+        m3_college: data.m3_college || 'N/A',
+        m3_dept: data.m3_dept || 'N/A',
+        m3_year: data.m3_year || 'N/A',
+        lastUpdated: new Date()
     };
 
-    let isUpdate = false;
-    try {
-        if (fs.existsSync(filePath)) {
-            console.log("Reading existing Excel file...");
-            workbook = XLSX.readFile(filePath);
-            const sheetName = workbook.SheetNames[0];
-            const worksheet = workbook.Sheets[sheetName];
-            existingData = XLSX.utils.sheet_to_json(worksheet);
+    let existing = await Registration.findOne({ m1_email: leadEmail });
 
-            // Case-insensitive check for existing user (by lead email)
-            const existingIndex = existingData.findIndex(row =>
-                row['Lead Email (M1)'] && row['Lead Email (M1)'].toString().trim().toLowerCase() === leadEmail
-            );
-
-            if (existingIndex !== -1) {
-                console.log(`[EDIT] Updating existing record for: ${leadEmail}`);
-                isUpdate = true;
-                const originalRegDate = existingData[existingIndex]['Registration Date'] || new Date().toLocaleString();
-                const teamId = existingData[existingIndex]['Team ID']; // Preserve original Team ID
-
-                existingData[existingIndex] = {
-                    'Team ID': teamId,
-                    'Registration Date': originalRegDate,
-                    ...entryData,
-                    'Last Updated': new Date().toLocaleString()
-                };
-            } else {
-                console.log(`[NEW] Adding new record for: ${leadEmail}`);
-                isUpdate = false;
-                // Calculate next Team ID
-                const nextNum = existingData.length + 1;
-                existingData.push({
-                    'Team ID': `Team ${nextNum}`,
-                    'Registration Date': new Date().toLocaleString(),
-                    ...entryData,
-                    'Last Updated': 'Never'
-                });
-            }
-        } else {
-            console.log("Creating new master Excel file...");
-            workbook = XLSX.utils.book_new();
-            isUpdate = false;
-            existingData = [{
-                'Team ID': 'Team 1',
-                'Registration Date': new Date().toLocaleString(),
-                ...entryData,
-                'Last Updated': 'Never'
-            }];
-        }
-
-        // Keep it organized by Team ID number
-        existingData.sort((a, b) => {
-            const numA = parseInt(a['Team ID'].replace('Team ', ''));
-            const numB = parseInt(b['Team ID'].replace('Team ', ''));
-            return numA - numB;
+    if (existing) {
+        console.log(`[DB] Updating existing record for: ${leadEmail}`);
+        await Registration.updateOne({ m1_email: leadEmail }, { $set: updateData });
+        return true; // isUpdate
+    } else {
+        console.log(`[DB] Adding new record for: ${leadEmail}`);
+        const count = await Registration.countDocuments();
+        const newReg = new Registration({
+            ...updateData,
+            teamId: `Team ${count + 1}`,
+            registrationDate: new Date()
         });
-
-        const newWorksheet = XLSX.utils.json_to_sheet(existingData);
-
-        if (workbook.SheetNames.length === 0) {
-            XLSX.utils.book_append_sheet(workbook, newWorksheet, 'Registrations');
-        } else {
-            workbook.Sheets[workbook.SheetNames[0]] = newWorksheet;
-        }
-
-        XLSX.writeFile(workbook, filePath);
-        console.log("Excel file successfully updated.");
-        return isUpdate;
-    } catch (excelError) {
-        if (excelError.code === 'EBUSY' || excelError.toString().includes('permission denied')) {
-            throw new Error("SERVER ERROR: The registration file is currently open in Excel. Please close it so the server can save your changes.");
-        }
-        console.error("Excel Helper Error:", excelError.message);
-        throw excelError;
+        await newReg.save();
+        return false; // isUpdate
     }
 }
 
@@ -201,60 +164,52 @@ app.get('/api/ping', (req, res) => {
 });
 
 // Admin: Get all registrations
-app.get('/api/registrations', (req, res) => {
-    const filePath = getExcelPath();
-    if (!fs.existsSync(filePath)) {
-        return res.status(200).json([]); // Return empty array if no file yet
-    }
+app.get('/api/registrations', async (req, res) => {
     try {
-        const workbook = XLSX.readFile(filePath);
-        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-        const data = XLSX.utils.sheet_to_json(worksheet);
-        res.status(200).json(data);
+        const data = await Registration.find().sort({ registrationDate: 1 });
+        // Map to Excel-like format for the frontend dashboard
+        const mappedData = data.map(reg => ({
+            'Team ID': reg.teamId,
+            'Team Name': reg.teamName,
+            'Total Members': reg.memberCount,
+            'Lead Name (M1)': reg.m1_name,
+            'Lead Email (M1)': reg.m1_email,
+            'Lead College (M1)': reg.m1_college,
+            'Registration Date': reg.registrationDate.toLocaleString(),
+            'Last Updated': reg.lastUpdated ? reg.lastUpdated.toLocaleString() : 'Never'
+        }));
+        res.status(200).json(mappedData);
     } catch (error) {
         console.error('Fetch all error:', error);
         res.status(500).json({ message: 'Error retrieving registrations' });
     }
 });
 
-app.get('/api/registration/:email', (req, res) => {
+app.get('/api/registration/:email', async (req, res) => {
     const email = req.params.email.trim().toLowerCase();
-    const filePath = getExcelPath();
-
-    if (!fs.existsSync(filePath)) {
-        return res.status(404).json({ message: 'No registration found.' });
-    }
-
     try {
-        const workbook = XLSX.readFile(filePath);
-        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-        const data = XLSX.utils.sheet_to_json(worksheet);
-
-        // Case-insensitive fetch
-        const record = data.find(row =>
-            row['Lead Email (M1)'] && row['Lead Email (M1)'].toString().trim().toLowerCase() === email
-        );
+        const record = await Registration.findOne({ m1_email: email });
 
         if (record) {
-            // Map Excel headers back to form field names
+            // Map MongoDB fields back to form names
             const formData = {
-                teamName: record['Team Name'],
-                m1_name: record['Lead Name (M1)'],
-                m1_email: record['Lead Email (M1)'],
-                m1_phone: record['Lead Phone (M1)'],
-                m1_college: record['Lead College (M1)'],
-                m1_dept: record['Lead Dept (M1)'],
-                m1_year: record['Lead Year (M1)'],
-                m2_name: record['Member 2 Name'] === 'N/A' ? '' : record['Member 2 Name'],
-                m2_phone: record['Member 2 Phone'] === 'N/A' ? '' : record['Member 2 Phone'],
-                m2_college: record['Member 2 College'] === 'N/A' ? '' : record['Member 2 College'],
-                m2_dept: record['Member 2 Dept'] === 'N/A' ? '' : record['Member 2 Dept'],
-                m2_year: record['Member 2 Year'] === 'N/A' ? '' : record['Member 2 Year'],
-                m3_name: record['Member 3 Name'] === 'N/A' ? '' : record['Member 3 Name'],
-                m3_phone: record['Member 3 Phone'] === 'N/A' ? '' : record['Member 3 Phone'],
-                m3_college: record['Member 3 College'] === 'N/A' ? '' : record['Member 3 College'],
-                m3_dept: record['Member 3 Dept'] === 'N/A' ? '' : record['Member 3 Dept'],
-                m3_year: record['Member 3 Year'] === 'N/A' ? '' : record['Member 3 Year']
+                teamName: record.teamName,
+                m1_name: record.m1_name,
+                m1_email: record.m1_email,
+                m1_phone: record.m1_phone,
+                m1_college: record.m1_college,
+                m1_dept: record.m1_dept,
+                m1_year: record.m1_year,
+                m2_name: record.m2_name === 'N/A' ? '' : record.m2_name,
+                m2_phone: record.m2_phone === 'N/A' ? '' : record.m2_phone,
+                m2_college: record.m2_college === 'N/A' ? '' : record.m2_college,
+                m2_dept: record.m2_dept === 'N/A' ? '' : record.m2_dept,
+                m2_year: record.m2_year === 'N/A' ? '' : record.m2_year,
+                m3_name: record.m3_name === 'N/A' ? '' : record.m3_name,
+                m3_phone: record.m3_phone === 'N/A' ? '' : record.m3_phone,
+                m3_college: record.m3_college === 'N/A' ? '' : record.m3_college,
+                m3_dept: record.m3_dept === 'N/A' ? '' : record.m3_dept,
+                m3_year: record.m3_year === 'N/A' ? '' : record.m3_year
             };
             res.status(200).json(formData);
         } else {
@@ -266,78 +221,65 @@ app.get('/api/registration/:email', (req, res) => {
     }
 });
 
-app.get('/admin/download', (req, res) => {
-    const filePath = getExcelPath();
+app.get('/admin/download', async (req, res) => {
+    try {
+        const data = await Registration.find().sort({ registrationDate: 1 });
+        const excelData = data.map(reg => ({
+            'Team ID': reg.teamId,
+            'Registration Date': reg.registrationDate.toLocaleString(),
+            'Team Name': reg.teamName,
+            'Total Members': reg.memberCount,
+            'Lead Name (M1)': reg.m1_name,
+            'Lead Email (M1)': reg.m1_email,
+            'Lead Phone (M1)': reg.m1_phone,
+            'Lead College (M1)': reg.m1_college,
+            'Lead Dept (M1)': reg.m1_dept,
+            'Lead Year (M1)': reg.m1_year,
+            'Member 2 Name': reg.m2_name,
+            'Member 2 Phone': reg.m2_phone,
+            'Member 2 College': reg.m2_college,
+            'Member 2 Dept': reg.m2_dept,
+            'Member 2 Year': reg.m2_year,
+            'Member 3 Name': reg.m3_name,
+            'Member 3 Phone': reg.m3_phone,
+            'Member 3 College': reg.m3_college,
+            'Member 3 Dept': reg.m3_dept,
+            'Member 3 Year': reg.m3_year,
+            'Last Updated': reg.lastUpdated ? reg.lastUpdated.toLocaleString() : 'Never'
+        }));
 
-    if (fs.existsSync(filePath)) {
-        // Prevent browser from caching old versions of the download
-        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-        res.setHeader('Pragma', 'no-cache');
-        res.setHeader('Expires', '0');
+        const workbook = XLSX.utils.book_new();
+        const worksheet = XLSX.utils.json_to_sheet(excelData);
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Registrations');
 
-        res.download(filePath, 'Nova_Nataka_Registrations.xlsx', (err) => {
-            if (err) {
-                console.error("Download error:", err);
-                if (!res.headersSent) {
-                    res.status(500).send("Could not download the file.");
-                }
-            }
-        });
-    } else {
-        res.status(404).send("Registration file not found yet. No one has registered!");
+        // Write to buffer to send directly
+        const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+
+        res.setHeader('Content-Disposition', 'attachment; filename=Nova_Nataka_Registrations.xlsx');
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.send(buffer);
+    } catch (error) {
+        console.error('Download error:', error);
+        res.status(500).send("Error generating Excel file.");
     }
 });
 
-app.post('/api/delete-registration', (req, res) => {
+app.post('/api/delete-registration', async (req, res) => {
     const { email, password } = req.body;
 
     if (password !== process.env.ADMIN_PASSWORD) {
         return res.status(401).json({ message: 'Unauthorized. Invalid admin password.' });
     }
 
-    if (!email) {
-        return res.status(400).json({ message: 'Email is required to delete a record.' });
-    }
-
-    const filePath = getExcelPath();
-    if (!fs.existsSync(filePath)) {
-        return res.status(404).json({ message: 'No file found to delete from.' });
-    }
-
     try {
-        const workbook = XLSX.readFile(filePath);
-        const sheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[sheetName];
-        let data = XLSX.utils.sheet_to_json(worksheet);
-
-        const initialLength = data.length;
-        // Filter out the record with the matching email
-        const filteredData = data.filter(row =>
-            row['Lead Email (M1)'] && row['Lead Email (M1)'].toString().trim().toLowerCase() !== email.trim().toLowerCase()
-        );
-
-        if (filteredData.length === initialLength) {
+        const result = await Registration.deleteOne({ m1_email: email.trim().toLowerCase() });
+        if (result.deletedCount === 0) {
             return res.status(404).json({ message: 'Record not found.' });
         }
-
-        // Re-calculate Team IDs for consistency (optional, but keeps it clean)
-        const updatedData = filteredData.map((row, index) => {
-            return {
-                ...row,
-                'Team ID': `Team ${index + 1}`
-            };
-        });
-
-        const newWorksheet = XLSX.utils.json_to_sheet(updatedData);
-        workbook.Sheets[sheetName] = newWorksheet;
-        XLSX.writeFile(workbook, filePath);
 
         console.log(`[DELETE] Removed record for: ${email}`);
         res.status(200).json({ message: 'Record deleted successfully' });
     } catch (error) {
-        if (error.code === 'EBUSY' || error.toString().includes('permission denied')) {
-            return res.status(500).json({ message: "SERVER ERROR: File is open in Excel. Close it to delete." });
-        }
         console.error('Delete error:', error);
         res.status(500).json({ message: 'Error deleting record' });
     }
@@ -363,8 +305,8 @@ app.post('/api/register', async (req, res) => {
         console.log(`[API] Processing registration for: ${registrationData.m1_email}`);
         console.log(`[DEVICE] User-Agent: ${req.headers['user-agent']}`);
 
-        // 2. Save to Excel
-        const isUpdate = saveToExcel(registrationData);
+        // 2. Save to database
+        const isUpdate = await saveToDB(registrationData);
 
         // 3. Send Email
         if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {

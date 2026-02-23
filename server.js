@@ -176,18 +176,13 @@ app.get('/api/ping', (req, res) => {
 
 // Database Diagnostic Endpoint
 app.get('/api/db-test', async (req, res) => {
-    const state = mongoose.connection.readyState;
     const states = { 0: 'Disconnected', 1: 'Connected', 2: 'Connecting', 3: 'Disconnecting' };
 
     try {
-        if (state !== 1) {
-            return res.status(500).json({
-                status: 'Error',
-                dbState: states[state],
-                message: 'Database is not connected.'
-            });
-        }
-        // Try a tiny write/read
+        console.log("Diagnostic check requested...");
+        // This will wait for the connection to finish or fail
+        await mongoose.connection.asPromise();
+
         const count = await Registration.countDocuments();
         res.status(200).json({
             status: 'Success',
@@ -198,9 +193,10 @@ app.get('/api/db-test', async (req, res) => {
     } catch (err) {
         res.status(500).json({
             status: 'Error',
-            dbState: states[state],
-            error: err.message,
-            stack: err.stack
+            dbState: states[mongoose.connection.readyState],
+            errorName: err.name,
+            errorMessage: err.message,
+            tip: err.message.includes('whitelisted') ? 'Check MongoDB Atlas Network Access' : 'Check password in Vercel settings'
         });
     }
 });

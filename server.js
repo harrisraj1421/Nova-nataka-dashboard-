@@ -356,8 +356,12 @@ app.post('/api/register', async (req, res) => {
         const isUpdate = saveToExcel(registrationData);
 
         // 3. Send Email
-        console.log("Attempting to send confirmation email...");
-        await sendConfirmationEmail(registrationData.m1_email, registrationData.m1_name, isUpdate);
+        if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+            console.error("CRITICAL: Email environment variables (EMAIL_USER/EMAIL_PASS) are missing!");
+        } else {
+            console.log("Attempting to send confirmation email...");
+            await sendConfirmationEmail(registrationData.m1_email, registrationData.m1_name, isUpdate);
+        }
 
         console.log(">>> REGISTRATION COMPLETED SUCCESSFULLY <<<\n");
         res.status(200).json({ message: isUpdate ? 'Registration updated' : 'Registration successful' });

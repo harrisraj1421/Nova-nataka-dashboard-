@@ -15,9 +15,23 @@ const EXCEL_FILE = 'nova_nataka_registrations.xlsx';
 app.use(cors());
 app.use(bodyParser.json());
 
+// --- Helper: Get Writable Path ---
+function getExcelPath() {
+    const defaultPath = path.join(__dirname, EXCEL_FILE);
+
+    // Check if we are in a serverless environment (like Vercel/AWS)
+    // These environments usually only allow writing to /tmp
+    if (process.env.VERCEL || process.env.LAMBDA_TASK_ROOT || process.env.NOW_REGION) {
+        const os = require('os');
+        return path.join(os.tmpdir(), EXCEL_FILE);
+    }
+
+    return defaultPath;
+}
+
 // --- Helper: Save to Excel (UPSERT Logic) ---
 function saveToExcel(data) {
-    const filePath = path.join(__dirname, EXCEL_FILE);
+    const filePath = getExcelPath();
     let workbook;
     let existingData = [];
 
@@ -184,7 +198,7 @@ app.get('/api/ping', (req, res) => {
 
 // Admin: Get all registrations
 app.get('/api/registrations', (req, res) => {
-    const filePath = path.join(__dirname, EXCEL_FILE);
+    const filePath = getExcelPath();
     if (!fs.existsSync(filePath)) {
         return res.status(200).json([]); // Return empty array if no file yet
     }
@@ -201,7 +215,7 @@ app.get('/api/registrations', (req, res) => {
 
 app.get('/api/registration/:email', (req, res) => {
     const email = req.params.email.trim().toLowerCase();
-    const filePath = path.join(__dirname, EXCEL_FILE);
+    const filePath = getExcelPath();
 
     if (!fs.existsSync(filePath)) {
         return res.status(404).json({ message: 'No registration found.' });
@@ -249,7 +263,7 @@ app.get('/api/registration/:email', (req, res) => {
 });
 
 app.get('/admin/download', (req, res) => {
-    const filePath = path.join(__dirname, EXCEL_FILE);
+    const filePath = getExcelPath();
 
     if (fs.existsSync(filePath)) {
         // Prevent browser from caching old versions of the download
@@ -281,7 +295,7 @@ app.post('/api/delete-registration', (req, res) => {
         return res.status(400).json({ message: 'Email is required to delete a record.' });
     }
 
-    const filePath = path.join(__dirname, EXCEL_FILE);
+    const filePath = getExcelPath();
     if (!fs.existsSync(filePath)) {
         return res.status(404).json({ message: 'No file found to delete from.' });
     }

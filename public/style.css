@@ -1006,61 +1006,65 @@ footer {
 
 @media (max-width: 768px) {
     .college-header {
-        padding: 1rem 5%;
+        padding: calc(1rem + env(safe-area-inset-top)) 5% 0.8rem;
     }
 
     .header-container {
         flex-direction: column;
         align-items: center;
-        gap: 1rem;
+        gap: 0.5rem;
         position: relative;
     }
 
     .college-brand {
-        flex-direction: column;
-        gap: 0.8rem;
-        text-align: center;
-        padding-bottom: 0.5rem;
+        flex-direction: row;
+        /* Keep it side-by-side if possible or more horizontal */
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        text-align: left;
+        padding-bottom: 0.2rem;
         width: 100%;
     }
 
     .event-navbar-mini {
-        margin: 0;
-        width: fit-content;
-        padding: 0.4rem 1rem;
+        display: none;
+        /* Already hidden but ensuring it stay hidden to save space */
     }
 
     .hamburger {
         position: absolute;
-        top: 0;
+        top: 50%;
         right: 0;
+        transform: translateY(-50%);
     }
 
     .college-info {
-        text-align: center;
+        text-align: left;
     }
 
     .college-logo {
-        height: 60px;
-        width: 60px;
+        height: 55px;
+        width: 55px;
     }
 
     .college-info h1 {
-        font-size: 1.1rem;
-        padding: 0 10%;
+        font-size: 0.9rem;
+        padding: 0;
+        line-height: 1.2;
     }
 
     .college-info p {
-        font-size: 0.7rem;
+        font-size: 0.65rem;
     }
 
     .hero {
         flex-direction: column-reverse;
         justify-content: center;
         text-align: center;
-        padding-top: 280px;
-        /* Increased to accommodate stacked header */
-        gap: 3rem;
+        padding-top: 320px;
+        /* Adjusted to prevent header from hiding the cosmic logo */
+        gap: 2rem;
     }
 
     .hero-content {

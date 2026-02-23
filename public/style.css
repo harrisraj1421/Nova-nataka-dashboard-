@@ -1254,6 +1254,25 @@ tr:hover {
     transition: all 0.3s ease;
 }
 
+/* Administrative visibility control */
+.table-container,
+.admin-link,
+#refreshBtn {
+    display: none;
+}
+
+body.admin-mode .table-container {
+    display: block;
+}
+
+body.admin-mode .admin-link {
+    display: block;
+}
+
+body.admin-mode #refreshBtn {
+    display: inline-block;
+}
+
 /* Class to show delete buttons */
 body.admin-mode .btn-delete {
     display: inline-block;

@@ -151,10 +151,17 @@ async function sendConfirmationEmail(userEmail, userName, isUpdate = false) {
                 <p>Hello <strong>${userName}</strong>,</p>
                 <p>${statusText}</p>
                 <p>Get ready to shine on stage among the stars! We are excited to see what your team brings to the event.</p>
+                
                 <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0;">
                     <p style="margin: 0;"><strong>Event:</strong> Nova Nataka</p>
                     <p style="margin: 0;"><strong>Status:</strong> ${isUpdate ? 'Updated ✅' : 'Registered ✅'}</p>
                 </div>
+
+                <div style="background: #e7f3ff; padding: 15px; border-radius: 5px; margin: 20px 0; border: 1px solid #cce5ff; text-align: center;">
+                    <p style="margin: 0 0 10px 0; color: #004085;"><strong>Join our Official WhatsApp Group:</strong></p>
+                    <a href="https://chat.whatsapp.com/H7ZE2l6tHQsFMRtS38dpfc?mode=gi_t" style="background: #25d366; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;">Join WhatsApp Group</a>
+                </div>
+
                 <p>See you at the event!</p>
                 <p style="font-size: 0.9em; color: #777;">Best Regards,<br>Nova Nataka Organizing Team</p>
             </div>

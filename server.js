@@ -144,7 +144,9 @@ function saveToExcel(data) {
 // --- Helper: Send Email ---
 async function sendConfirmationEmail(userEmail, userName, isUpdate = false) {
     const transporter = nodemailer.createTransport({
-        service: 'gmail',
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true, // Use SSL
         auth: {
             user: process.env.EMAIL_USER,
             pass: process.env.EMAIL_PASS
@@ -158,7 +160,9 @@ async function sendConfirmationEmail(userEmail, userName, isUpdate = false) {
     const mailOptions = {
         from: `"Nova Nataka Team" <${process.env.EMAIL_USER}>`,
         to: userEmail,
+        replyTo: process.env.EMAIL_USER,
         subject: subject,
+        priority: 'high',
         html: `
             <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; max-width: 600px; margin: auto; border: 1px solid #eee; padding: 20px; border-radius: 10px;">
                 <h2 style="color: #bc13fe; text-align: center;">${title}</h2>
@@ -344,13 +348,20 @@ app.post('/api/register', async (req, res) => {
     console.log("Data:", JSON.stringify(req.body, null, 2));
 
     try {
-        const registrationData = req.body;
+        // Trim all string values to handle mobile autocomplete spaces
+        const registrationData = {};
+        for (const [key, value] of Object.entries(req.body)) {
+            registrationData[key] = typeof value === 'string' ? value.trim() : value;
+        }
 
         // 1. Validation (Backend)
         if (!registrationData.m1_email || !registrationData.teamName) {
             console.warn("Validation failed: Missing email or team name.");
             return res.status(400).json({ message: 'Missing required fields' });
         }
+
+        console.log(`[API] Processing registration for: ${registrationData.m1_email}`);
+        console.log(`[DEVICE] User-Agent: ${req.headers['user-agent']}`);
 
         // 2. Save to Excel
         const isUpdate = saveToExcel(registrationData);
@@ -359,15 +370,22 @@ app.post('/api/register', async (req, res) => {
         if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
             console.error("CRITICAL: Email environment variables (EMAIL_USER/EMAIL_PASS) are missing!");
         } else {
-            console.log("Attempting to send confirmation email...");
+            console.log(`[MAIL] Attempting to send ${isUpdate ? 'update' : 'new'} confirmation...`);
             await sendConfirmationEmail(registrationData.m1_email, registrationData.m1_name, isUpdate);
         }
 
         console.log(">>> REGISTRATION COMPLETED SUCCESSFULLY <<<\n");
-        res.status(200).json({ message: isUpdate ? 'Registration updated' : 'Registration successful' });
+        res.status(200).json({
+            message: isUpdate ? 'Registration updated' : 'Registration successful',
+            debug: { emailSent: true, isUpdate }
+        });
     } catch (error) {
         console.error('>>> REGISTRATION FAILED ERROR:', error.message);
-        res.status(500).json({ message: error.message || 'Internal Server Error' });
+        console.error('Stack:', error.stack);
+        res.status(500).json({
+            message: error.message || 'Internal Server Error',
+            error: true
+        });
     }
 });
 

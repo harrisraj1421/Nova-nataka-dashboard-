@@ -15,11 +15,22 @@ const EXCEL_FILE = 'nova_nataka_registrations.xlsx';
 // --- Database Connection ---
 const MONGODB_URI = process.env.MONGODB_URI;
 if (!MONGODB_URI) {
-    console.error("CRITICAL: MONGODB_URI is missing in .env! Data will not persist correctly.");
+    console.error("CRITICAL: MONGODB_URI is missing! Data will NOT be saved.");
 } else {
-    mongoose.connect(MONGODB_URI)
+    console.log("Starting MongoDB connection attempt...");
+    mongoose.connect(MONGODB_URI, {
+        serverSelectionTimeoutMS: 15000, // 15 seconds
+        connectTimeoutMS: 15000,
+    })
         .then(() => console.log("Connected to MongoDB Atlas ✅"))
-        .catch(err => console.error("MongoDB Connection Error ❌:", err));
+        .catch(err => {
+            console.error("MongoDB Connection Error ❌:");
+            console.error("Error Name:", err.name);
+            console.error("Error Message:", err.message);
+            if (err.message.includes("IP not whitelisted")) {
+                console.error("FIX: Go to MongoDB Atlas -> Network Access -> Add 0.0.0.0/0");
+            }
+        });
 }
 
 // --- Schema Definition ---
@@ -161,6 +172,37 @@ async function sendConfirmationEmail(userEmail, userName, isUpdate = false) {
 // --- API Endpoints ---
 app.get('/api/ping', (req, res) => {
     res.status(200).json({ status: 'Server is running', timestamp: new Date() });
+});
+
+// Database Diagnostic Endpoint
+app.get('/api/db-test', async (req, res) => {
+    const state = mongoose.connection.readyState;
+    const states = { 0: 'Disconnected', 1: 'Connected', 2: 'Connecting', 3: 'Disconnecting' };
+
+    try {
+        if (state !== 1) {
+            return res.status(500).json({
+                status: 'Error',
+                dbState: states[state],
+                message: 'Database is not connected.'
+            });
+        }
+        // Try a tiny write/read
+        const count = await Registration.countDocuments();
+        res.status(200).json({
+            status: 'Success',
+            dbState: 'Connected',
+            totalRecords: count,
+            message: 'Database is responding perfectly!'
+        });
+    } catch (err) {
+        res.status(500).json({
+            status: 'Error',
+            dbState: states[state],
+            error: err.message,
+            stack: err.stack
+        });
+    }
 });
 
 // Admin: Get all registrations
@@ -335,6 +377,10 @@ app.post('/api/register', async (req, res) => {
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Start Server
-app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
-});
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`Server running at http://localhost:${PORT}`);
+    });
+}
+
+module.exports = app;

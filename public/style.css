@@ -1,19 +1,21 @@
 :root {
-    --primary-color: #00ffff;
-    /* Vivid Cyan */
-    --secondary-color: #ff00ff;
-    /* Neon Magenta */
-    --accent-color: #ffffff;
-    --bg-dark: #000000;
-    --bg-card: rgba(10, 10, 20, 0.6);
-    --glass-border: rgba(0, 255, 255, 0.2);
-    --text-main: #ffffff;
-    --text-muted: rgba(255, 255, 255, 0.9);
+    --primary-color: #6C5CE7;
+    /* Cosmic Violet (Primary Glow) */
+    --secondary-color: #00F5D4;
+    /* Neon Cyan (Accent) */
+    --highlight-color: #FFD166;
+    /* Soft Gold (Highlight) */
+    --bg-dark: #050816;
+    /* Deep Space Blue */
+    --bg-card: rgba(10, 15, 30, 0.7);
+    --glass-border: rgba(108, 92, 231, 0.25);
+    --text-main: #F1F1F1;
+    --text-muted: rgba(241, 241, 241, 0.85);
     --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-    --theme-transition: all 1.2s ease-in-out;
-    --font-main: 'Outfit', sans-serif;
-    --font-heading: 'Unbounded', sans-serif;
-    --font-mono: 'Space Grotesk', monospace;
+    --theme-transition: all 1s ease-in-out;
+    --font-main: 'Inter', sans-serif;
+    --font-heading: 'Orbitron', sans-serif;
+    --font-subheading: 'Audiowide', cursive;
 }
 
 h1,
@@ -21,10 +23,11 @@ h2,
 h3,
 .animate-title {
     font-family: var(--font-heading);
-    text-shadow: 0 0 20px rgba(0, 255, 255, 0.4), 0 10px 40px rgba(0, 0, 0, 1);
+    text-shadow: 0 0 20px rgba(108, 92, 231, 0.4), 0 10px 40px rgba(0, 0, 0, 1);
     letter-spacing: 0.15em;
     text-transform: uppercase;
-    line-height: 1.1;
+    line-height: 1.2;
+    color: var(--text-main);
 }
 
 p,
@@ -322,8 +325,9 @@ h3 {
 }
 
 .event-title-mini {
+    font-family: var(--font-subheading);
     font-size: 0.95rem;
-    font-weight: 800;
+    font-weight: 400;
     letter-spacing: 2px;
     text-transform: uppercase;
     color: var(--text-main);
@@ -505,10 +509,8 @@ h3 {
 }
 
 .hero h1 span {
-    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--secondary-color);
+    text-shadow: 0 0 30px rgba(0, 245, 212, 0.5);
 }
 
 .hero p {
@@ -613,13 +615,13 @@ h3 {
 
 /* --- Storytelling Elements --- */
 .story-preface {
+    font-family: var(--font-subheading);
     font-size: 1.1rem;
-    color: var(--secondary-color);
+    color: var(--highlight-color);
     letter-spacing: 3px;
     text-transform: uppercase;
     margin-bottom: 1rem;
-    font-weight: 400;
-    opacity: 0.8;
+    opacity: 0.9;
 }
 
 .scroll-indicator {
@@ -685,10 +687,11 @@ h3 {
 }
 
 .story-subtitle {
+    font-family: var(--font-subheading);
     text-align: center;
     font-size: 2rem;
     margin-bottom: 3rem;
-    color: var(--primary-color);
+    color: var(--secondary-color);
     text-transform: uppercase;
     letter-spacing: 2px;
 }
@@ -699,11 +702,12 @@ h3 {
 }
 
 .registration-preface {
+    font-family: var(--font-subheading);
     font-size: 1.1rem;
-    color: var(--secondary-color);
+    color: var(--highlight-color);
     letter-spacing: 2px;
     text-transform: uppercase;
-    opacity: 0.8;
+    opacity: 0.9;
 }
 
 .story-desc {
@@ -820,12 +824,12 @@ h3 {
 }
 
 .timer-label {
+    font-family: var(--font-subheading);
     font-size: 0.8rem;
     text-transform: uppercase;
     letter-spacing: 3px;
-    color: var(--primary-color);
+    color: var(--highlight-color);
     margin-bottom: 1.5rem !important;
-    font-weight: 700;
 }
 
 .timer-display {
@@ -1323,8 +1327,9 @@ footer {
 }
 
 .stat-card p {
+    font-family: var(--font-subheading);
     font-size: 2rem;
-    font-weight: 800;
+    font-weight: 400;
     color: var(--secondary-color);
 }
 

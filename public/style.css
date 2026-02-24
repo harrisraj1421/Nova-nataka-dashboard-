@@ -1169,8 +1169,22 @@ footer {
     }
 
     .registration-container {
-        padding: 2rem 1.5rem;
+        padding: 2rem 1rem;
         border-radius: 15px;
+    }
+
+    .edit-search-box {
+        padding: 1.5rem 1rem;
+    }
+
+    .search-input-group {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .search-input-group button {
+        width: 100%;
+        padding: 1rem;
     }
 
     .section-title {

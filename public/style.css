@@ -489,11 +489,11 @@ h3 {
 
 /* --- Hero --- */
 .hero {
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 180px 10% 0;
+    padding: 160px 10% 5rem;
 }
 
 .hero h1 {
@@ -721,6 +721,7 @@ h3 {
     margin-bottom: 2rem;
     text-transform: uppercase;
     letter-spacing: 5px;
+    line-height: 1.2;
 }
 
 .rounds-container {
@@ -1070,13 +1071,12 @@ footer {
 
     .college-brand {
         flex-direction: row;
-        /* Keep it side-by-side if possible or more horizontal */
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
         gap: 1rem;
         text-align: left;
         padding-bottom: 0.2rem;
-        width: 100%;
+        width: calc(100% - 35px);
     }
 
     .event-navbar-mini {
@@ -1107,16 +1107,19 @@ footer {
     }
 
     .college-info p {
-        font-size: 0.65rem;
+        font-size: 0.6rem;
+        line-height: 1.3;
     }
 
     .hero {
         flex-direction: column-reverse;
         justify-content: center;
         text-align: center;
-        padding-top: 320px;
-        /* Adjusted to prevent header from hiding the cosmic logo */
-        gap: 2rem;
+        padding-top: 180px;
+        padding-bottom: 4rem;
+        height: auto;
+        min-height: 100vh;
+        gap: 1.5rem;
     }
 
     .hero-content {
@@ -1157,6 +1160,10 @@ footer {
         margin-left: 0;
     }
 
+    .about {
+        padding: 4rem 5% 3rem;
+    }
+
     .btn-outline {
         margin-top: 1rem;
     }
@@ -1167,7 +1174,10 @@ footer {
     }
 
     .section-title {
-        font-size: 2rem;
+        font-size: 1.8rem;
+        letter-spacing: 3px;
+        line-height: 1.3;
+        margin-bottom: 1.5rem;
     }
 
     .story-paragraph {
@@ -1223,7 +1233,8 @@ footer {
     }
 
     .section-title {
-        font-size: 1.8rem;
+        font-size: 1.6rem;
+        letter-spacing: 2px;
     }
 
     .card {

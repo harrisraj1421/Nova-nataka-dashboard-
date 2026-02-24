@@ -798,12 +798,64 @@ h3 {
 }
 
 .edit-search-box {
-    background: rgba(188, 19, 254, 0.1);
-    border: 1px solid rgba(188, 19, 254, 0.3);
-    padding: 1.5rem;
-    border-radius: 12px;
-    margin-bottom: 2rem;
+    background: rgba(188, 19, 254, 0.08);
+    /* Slightly softer */
+    border: 1px solid rgba(188, 19, 254, 0.2);
+    padding: 2.5rem;
+    border-radius: 20px;
+    margin-top: 3rem;
     text-align: center;
+    backdrop-filter: blur(10px);
+}
+
+.countdown-container {
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.timer-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem !important;
+    font-weight: 700;
+}
+
+.timer-display {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.timer-segment {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 70px;
+}
+
+.timer-segment span {
+    font-size: 2.5rem;
+    font-weight: 800;
+    font-family: 'Space Grotesk', sans-serif;
+    color: var(--text-main);
+    line-height: 1;
+    text-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
+}
+
+.timer-segment label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin-top: 0.5rem;
+}
+
+.reaccess-terminal {
+    margin-top: 1rem;
 }
 
 .edit-search-box p {
@@ -1180,6 +1232,14 @@ footer {
 
     .modal-content {
         padding: 2rem 1rem;
+    }
+
+    .timer-segment span {
+        font-size: 1.8rem;
+    }
+
+    .timer-segment {
+        min-width: 55px;
     }
 }
 

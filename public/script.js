@@ -266,6 +266,38 @@ document.addEventListener('DOMContentLoaded', () => {
         footerCredits.addEventListener('dblclick', () => toggleAdminMode());
     }
 
+    // --- Countdown Timer ---
+    const targetDate = new Date('March 18, 2026 09:00:00').getTime();
+
+    function updateCountdown() {
+        const now = new Date().getTime();
+        const distance = targetDate - now;
+
+        if (distance < 0) {
+            const countdownEl = document.getElementById('countdown');
+            if (countdownEl) countdownEl.innerHTML = "<div class='timer-segment'><span>EVENT LIVE</span></div>";
+            return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        const daysEl = document.getElementById('days');
+        const hoursEl = document.getElementById('hours');
+        const minsEl = document.getElementById('minutes');
+        const secsEl = document.getElementById('seconds');
+
+        if (daysEl) daysEl.innerText = days.toString().padStart(2, '0');
+        if (hoursEl) hoursEl.innerText = hours.toString().padStart(2, '0');
+        if (minsEl) minsEl.innerText = minutes.toString().padStart(2, '0');
+        if (secsEl) secsEl.innerText = seconds.toString().padStart(2, '0');
+    }
+
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+
     // Start everything
     startSlideshow(3000);
     if (window.location.hash === '#admin') fetchRegistrations();

@@ -185,15 +185,7 @@
                         stars.</p>
                 </div>
 
-                <!-- Quick Edit Search -->
-                <div class="edit-search-box">
-                    <p>Already in the system? Re-access your terminal (to edit your registration):</p>
-                    <div class="search-input-group">
-                        <input type="email" id="searchEmail" placeholder="Commander Email">
-                        <button type="button" id="loadBtn" class="btn btn-secondary">Access Terminal</button>
-                    </div>
-                </div>
-
+                <!-- Registration Form -->
                 <form id="registrationForm">
                     <div class="form-group">
                         <label for="teamName">Starship Identity (Team Name)</label>
@@ -296,6 +288,39 @@
                         <div class="loader" id="loader"></div>
                     </button>
                 </form>
+
+                <!-- Quick Edit Search & Countdown -->
+                <div class="edit-search-box">
+                    <div class="countdown-container">
+                        <p class="timer-label">Event Launch In:</p>
+                        <div id="countdown" class="timer-display">
+                            <div class="timer-segment">
+                                <span id="days">00</span>
+                                <label>Days</label>
+                            </div>
+                            <div class="timer-segment">
+                                <span id="hours">00</span>
+                                <label>Hours</label>
+                            </div>
+                            <div class="timer-segment">
+                                <span id="minutes">00</span>
+                                <label>Mins</label>
+                            </div>
+                            <div class="timer-segment">
+                                <span id="seconds">00</span>
+                                <label>Secs</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="reaccess-terminal">
+                        <p>Already in the system? Re-access your terminal:</p>
+                        <div class="search-input-group">
+                            <input type="email" id="searchEmail" placeholder="Commander Email">
+                            <button type="button" id="loadBtn" class="btn btn-secondary">Access Terminal</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 

@@ -8,6 +8,8 @@ window.addEventListener('load', () => {
     }
 });
 
+const socket = (typeof io !== 'undefined') ? io() : null;
+
 document.addEventListener('DOMContentLoaded', () => {
     const registrationForm = document.getElementById('registrationForm');
     const submitBtn = document.getElementById('submitBtn');
@@ -301,9 +303,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // Start everything
     startSlideshow(3000);
     if (window.location.hash === '#admin') fetchRegistrations();
+
+    // Socket.io for Instant Updates
+    if (socket) {
+        socket.on('registrationUpdate', () => {
+            console.log('⚡ Instant update received via Socket!');
+            fetchRegistrations();
+        });
+    }
+
+    // Fallback Polling (Reduced from 30s to 15s)
     setInterval(() => {
         if (document.getElementById('admin')) fetchRegistrations();
-    }, 30000);
+    }, 15000);
 });
 
 // --- Global Functions ---

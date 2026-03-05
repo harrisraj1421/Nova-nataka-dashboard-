@@ -9,6 +9,11 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 
 const app = express();
+const http = require('http');
+const { Server } = require('socket.io');
+const server = http.createServer(app);
+const io = new Server(server);
+
 const PORT = process.env.PORT || 3000;
 const EXCEL_FILE = 'nova_nataka_registrations.xlsx';
 
@@ -111,6 +116,7 @@ async function saveToDB(data) {
             registrationDate: new Date()
         });
         await newReg.save();
+        io.emit('registrationUpdate'); // Notify all clients
         return false; // isUpdate
     }
 }
@@ -316,6 +322,7 @@ app.post('/api/delete-registration', async (req, res) => {
         }
 
         console.log(`[DELETE] Removed record for: ${email}`);
+        io.emit('registrationUpdate'); // Notify all clients
         res.status(200).json({ message: 'Record deleted successfully' });
     } catch (error) {
         console.error('Delete error:', error);
@@ -351,7 +358,9 @@ app.post('/api/register', async (req, res) => {
             console.error("CRITICAL: Email environment variables (EMAIL_USER/EMAIL_PASS) are missing!");
         } else {
             console.log(`[MAIL] Attempting to send ${isUpdate ? 'update' : 'new'} confirmation...`);
-            await sendConfirmationEmail(registrationData.m1_email, registrationData.m1_name, isUpdate);
+            // Send email in background to avoid delaying the response
+            sendConfirmationEmail(registrationData.m1_email, registrationData.m1_name, isUpdate)
+                .catch(err => console.error('[MAIL ERROR]', err));
         }
 
         console.log(">>> REGISTRATION COMPLETED SUCCESSFULLY <<<\n");
@@ -374,7 +383,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Start Server
 if (process.env.NODE_ENV !== 'production') {
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
         console.log(`Server running at http://localhost:${PORT}`);
     });
 }

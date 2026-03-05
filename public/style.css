@@ -1395,7 +1395,10 @@ tr:hover {
 }
 
 /* Administrative visibility control */
-.admin-link {
+.table-container,
+.admin-link,
+#refreshBtn,
+#adminAccessBtn {
     display: none;
 }
 
@@ -1407,7 +1410,8 @@ body.admin-mode .admin-link {
     display: block;
 }
 
-body.admin-mode #refreshBtn {
+body.admin-mode #refreshBtn,
+body.admin-mode #adminAccessBtn {
     display: inline-block;
 }
 

@@ -10,6 +10,13 @@ window.addEventListener('load', () => {
 
 const socket = (typeof io !== 'undefined') ? io() : null;
 
+// Fetch data immediately to eliminate the 5-second initial delay
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => fetchRegistrations());
+} else {
+    fetchRegistrations();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const registrationForm = document.getElementById('registrationForm');
     const submitBtn = document.getElementById('submitBtn');
@@ -302,7 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Start everything
     startSlideshow(3000);
-    fetchRegistrations(); // Fetch immediately on load
+    // fetchRegistrations(); // Already called at the top
 
     // Socket.io for Instant Updates
     if (socket) {

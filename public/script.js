@@ -302,7 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Start everything
     startSlideshow(3000);
-    if (window.location.hash === '#admin') fetchRegistrations();
+    fetchRegistrations(); // Fetch immediately on load
 
     // Socket.io for Instant Updates
     if (socket) {
@@ -346,12 +346,12 @@ async function fetchRegistrations() {
         const data = await response.json();
         const body = document.getElementById('regBody');
         if (!body) return;
-        body.innerHTML = '';
+        let rows = '';
         let totalParticipants = 0;
         data.forEach(reg => {
             totalParticipants += parseInt(reg['Total Members'] || 1);
             const isUpdated = (reg['Last Updated'] && reg['Last Updated'] !== 'Never');
-            const row = `
+            rows += `
                 <tr>
                     <td><strong>${reg['Team ID']}</strong></td>
                     <td>${reg['Team Name']}</td>
@@ -367,8 +367,8 @@ async function fetchRegistrations() {
                     <td>${(!reg['Last Updated'] || reg['Last Updated'] === 'Never') ? reg['Registration Date'] : reg['Last Updated']}</td>
                 </tr>
             `;
-            body.innerHTML += row;
         });
+        body.innerHTML = rows;
         document.getElementById('totalTeams').innerText = data.length;
         document.getElementById('totalParticipants').innerText = totalParticipants;
     } catch (err) {

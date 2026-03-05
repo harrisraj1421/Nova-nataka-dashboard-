@@ -1395,9 +1395,7 @@ tr:hover {
 }
 
 /* Administrative visibility control */
-.table-container,
-.admin-link,
-#refreshBtn {
+.admin-link {
     display: none;
 }
 

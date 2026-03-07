@@ -116,8 +116,42 @@ async function saveToDB(data) {
             registrationDate: new Date()
         });
         await newReg.save();
+
+        // Ensure continuity after adding
+        await reindexTeams();
+
         io.emit('registrationUpdate'); // Notify all clients
         return false; // isUpdate
+    }
+}
+
+// --- Helper: Re-index Teams for Continuity ---
+async function reindexTeams() {
+    try {
+        console.log("[DB] Re-indexing teams for continuity...");
+        const allTeams = await Registration.find().sort({ registrationDate: 1, _id: 1 });
+
+        const updates = [];
+        for (let i = 0; i < allTeams.length; i++) {
+            const expectedId = `Team ${i + 1}`;
+            if (allTeams[i].teamId !== expectedId) {
+                updates.push(
+                    Registration.updateOne(
+                        { _id: allTeams[i]._id },
+                        { $set: { teamId: expectedId } }
+                    )
+                );
+            }
+        }
+
+        if (updates.length > 0) {
+            await Promise.all(updates);
+            console.log(`[DB] Successfully re-indexed ${updates.length} teams.`);
+        } else {
+            console.log("[DB] No re-indexing needed.");
+        }
+    } catch (error) {
+        console.error("[DB ERROR] Re-indexing failed:", error);
     }
 }
 
@@ -322,6 +356,10 @@ app.post('/api/delete-registration', async (req, res) => {
         }
 
         console.log(`[DELETE] Removed record for: ${email}`);
+
+        // Re-index remaining teams to maintain continuity
+        await reindexTeams();
+
         io.emit('registrationUpdate'); // Notify all clients
         res.status(200).json({ message: 'Record deleted successfully' });
     } catch (error) {

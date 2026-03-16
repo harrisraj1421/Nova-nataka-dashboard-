@@ -1540,3 +1540,51 @@ body.tesseract-mode .hero-content h1 span {
     gap: 10px;
     align-items: center;
 }
+
+/* --- Registration Closed State --- */
+.registration.closed-state .registration-container {
+    border-color: #ff4444 !important;
+    background: rgba(255, 0, 0, 0.05) !important;
+}
+
+.registration.closed-state #registrationForm {
+    opacity: 0.4;
+    pointer-events: none;
+    filter: grayscale(1);
+}
+
+.closed-message-overlay {
+    background: rgba(255, 68, 68, 0.15);
+    border: 2px solid #ff4444;
+    color: #ff4444;
+    padding: 2rem;
+    border-radius: 15px;
+    margin-bottom: 2rem;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    font-family: var(--font-heading);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    box-shadow: 0 0 30px rgba(255, 68, 68, 0.3);
+    animation: pulse-border 2s infinite alternate;
+}
+
+.closed-message-overlay h3 {
+    color: #ff4444 !important;
+    text-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
+    margin-bottom: 0.5rem;
+}
+
+@keyframes pulse-border {
+    from { border-color: #ff4444; box-shadow: 0 0 20px rgba(255, 68, 68, 0.2); }
+    to { border-color: #ff8888; box-shadow: 0 0 40px rgba(255, 68, 68, 0.5); }
+}
+
+.registration.closed-state .submit-btn {
+    display: none !important;
+}
+
+.registration.closed-state .reaccess-terminal {
+    opacity: 0.6;
+    pointer-events: none;
+}

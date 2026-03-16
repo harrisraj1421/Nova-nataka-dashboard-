@@ -16,6 +16,7 @@ const io = new Server(server);
 
 const PORT = process.env.PORT || 3000;
 const EXCEL_FILE = 'nova_nataka_registrations.xlsx';
+const REGISTRATION_OPEN = false; // Set to false to close registrations
 
 // --- Database Connection ---
 const MONGODB_URI = process.env.MONGODB_URI;
@@ -373,6 +374,11 @@ app.post('/api/register', async (req, res) => {
     console.log("Data:", JSON.stringify(req.body, null, 2));
 
     try {
+        if (!REGISTRATION_OPEN) {
+            console.warn("[REJECTED] Registration attempt while closed.");
+            return res.status(403).json({ message: 'Registrations are now closed. Thank you for your interest!' });
+        }
+
         // Trim all string values to handle mobile autocomplete spaces
         const registrationData = {};
         for (const [key, value] of Object.entries(req.body)) {
